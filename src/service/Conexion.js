@@ -30,20 +30,20 @@ export class Conexion {
 			});
 	}
 
-	// getItem(tabla, id) {
-	// 	return axios
-	// 		.get(URL + tabla + "/" + id, {
-	// 			headers: this.header,
-	// 		})
-	// 		.then((res) => res.data);
-	// }
+	getItem(tabla, id) {
+		return axios
+			.get(URL + tabla + "/" + id, {
+				headers: this.header,
+			})
+			.then((res) => res.data);
+	}
 
-	// getCrearItem(tabla, data) {
-	// 	// console.log(tabla, data, 'envia crear')
-	// 	return axios
-	// 		.post(URL + tabla + "", { ...data }, { headers: this.header })
-	// 		.then((res) => res.data);
-	// }
+	getCrearItem(tabla, data) {
+		// console.log(tabla, data, 'envia crear')
+		return axios
+			.post(URL + tabla + "", { ...data }, { headers: this.header })
+			.then((res) => res.data);
+	}
 
 	// getEditarItem(tabla, data, id) {
 	// 	// console.log(data)

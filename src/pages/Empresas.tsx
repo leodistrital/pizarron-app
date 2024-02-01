@@ -4,12 +4,30 @@ import { useEffect, useState } from "react";
 import { useAppStore } from "../stores/app.store";
 import "react-responsive-modal/styles.css";
 import { Modal } from "react-responsive-modal";
+import Swal from "sweetalert2";
 
 export const Empresas = () => {
+	const defaultValues = {
+		id: "0",
+		nom_emp: "xxxx",
+		dir_emp: "",
+		mai_emp: "",
+		cod_dep_emp: "",
+		cod_ciu_emp: "",
+		tel_emp: "",
+		web_emp: "",
+		cod_sec_emp: "",
+		obs_emp: "ABC",
+		cod_pad_emp: "",
+	};
+	const [registro, setregistro] = useState(defaultValues);
+
 	const toogleLoading = useAppStore((state) => state.toogleLoading);
 	const { register, handleSubmit, reset } = useForm();
-	const { register:register1, handleSubmit:handleSubmit1 } = useForm();
+	const { register: register1, handleSubmit: handleSubmit1 ,reset:reset1 } = useForm( { });
 
+	const [idregistro, setidregistro] = useState(0);
+	
 	const [dataResultado, setdataResultado] = useState([]);
 	const [ciudadesData, setciudadesData] = useState([]);
 	const [departamentoData, setdepartamentoData] = useState([]);
@@ -19,9 +37,60 @@ export const Empresas = () => {
 
 	const [open, setOpen] = useState(false);
 
-	const onOpenModal = () => setOpen(true);
-	const onCloseModal = () => setOpen(false);
+	// const onOpenModal = () => {
+	// 	// setregistro(defaultValues);
+	// 	// reset1({defaultValues});
+	// 	setOpen(true);
+	// };
 
+	const crearRegistro = () => { 
+		reset1({defaultValues});
+		setOpen(true);
+	};
+
+	const onCloseModal = () => {
+		console.log('cerrando');
+		setregistro(defaultValues);
+		setidregistro(0);
+		// setregistro(defaultValues);
+		setOpen(false);
+	};
+
+	const editProduct = (id=0) => {
+		console.log(id);
+		if (id > 0) {
+			toogleLoading(true);
+			// console.log(idregistro);
+			datatable.getItem(Tabla, id).then(({ data }) => {
+				console.log(data);
+				// setValue("nom_emp", data.nom_emp);
+				reset1(data);
+				setidregistro(id);
+				setregistro(data);
+				// onOpenModal();
+				setOpen(true);
+				toogleLoading(false);
+			});
+		}
+	};
+
+	// useEffect(() => {
+	// 	console.log('algo cambio');
+	// 	// setValue("nom_emp", registro.nom_emp);
+	// 	// if (idregistro > 0) {
+	// 	// 	toogleLoading(true);
+	// 	// 	console.log(idregistro);
+	// 	// 	datatable.getItem(Tabla, idregistro).then(({ data }) => {
+	// 	// 		// console.log(data);
+	// 	// 		setidregistro(idregistro);
+	// 	// 		setregistro(data);
+	// 	// 		onOpenModal();
+	// 	// 		toogleLoading(false);
+	// 	// 	});
+	// 	// }
+	// }, [registro]);
+
+	/**Efecto solo para paremetros del formulario */
 	useEffect(() => {
 		datatable
 			.gettable("parametros/ciudades")
@@ -31,8 +100,9 @@ export const Empresas = () => {
 			.gettable("parametros/departamentos")
 			.then((data) => setdepartamentoData(data));
 	}, []);
+	/**Efecto solo para paremetros del formulario */
 
-	const onSubmit = handleSubmit((data) => {
+	const onSubmitBuscador = handleSubmit((data) => {
 		// console.log(data);
 		toogleLoading(true);
 		const queryString = Object.keys(data)
@@ -51,9 +121,28 @@ export const Empresas = () => {
 		});
 	});
 
+	const mostaralertaGuardado = ({ status }) => {
+		if (status == "Ok")
+			Swal.fire({
+				title: "Registro exitoso",
+				confirmButtonText: "Continuar",
+				confirmButtonColor: "#4a2a42",
+			}).then((result) => {
+				if (result.isConfirmed) {
+					setOpen(false);
+				}
+			});
+	};
 
-  const onSubmitpost = handleSubmit1((data) => {
-    console.log(data);
+	const onSubmitpost = handleSubmit1((data) => {
+		console.log(data);
+		datatable.getCrearItem(Tabla, data).then(({ resp }) => {
+			console.log(idregistro);
+			console.log(resp);
+			mostaralertaGuardado(resp);
+			// handleClick();
+			// setOpen(false);
+		});
 		// console.log(data);
 		// toogleLoading(true);
 		// const queryString = Object.keys(data)
@@ -72,6 +161,15 @@ export const Empresas = () => {
 		// });
 	});
 
+	// const onInputChange = (e, name) => {
+	// 	// console.log(name);
+	// 	console.log(e.target, e.target.value, name);
+	// 	// const val = (e.target && e.target.value) || "";
+	// 	// let _product = { ...formData };
+	// 	// _product[`${name}`] = val;
+
+	// };
+
 	return (
 		<>
 			<Modal
@@ -83,11 +181,12 @@ export const Empresas = () => {
 					<span
 						className='btnClose'
 						onClick={() => {
-							setOpen(false);
+							onCloseModal();
 						}}>
 						Close
 					</span>
 					<div className='gForm triB'>
+							<pre>{JSON.stringify(registro, null, 2)}</pre>
 						<h2>Formulario empresas nuevas </h2>
 						<div>
 							<form onSubmit={onSubmitpost}>
@@ -96,19 +195,25 @@ export const Empresas = () => {
 										<label htmlFor='nom'>Nombre</label>
 										<input
 											type='text'
-											{...register1("nom_emp")}
+											// name="nom_emp"
+											// id="nom_emp"
+											// value={registro.nom_emp}
+											{...register1("nom_emp") }
+											
+
 										/>
 									</p>
 								</div>
 								<div className='col2'>
 									<p>
-										<label htmlFor='dep'>
-											Departamento
+										<label htmlFor='cod_dep_emp'>
+											Departamento {registro.cod_dep_emp}
 										</label>
 										<select
-											{...register1("departamento")}
+											{...register1("cod_dep_emp")}
 											className='SELECT '
-											aria-invalid='false'>
+											aria-invalid='false'
+											value={registro.cod_dep_emp}>
 											<option value={0}>
 												Seleccione..
 											</option>
@@ -126,9 +231,11 @@ export const Empresas = () => {
 										</select>
 									</p>
 									<p>
-										<label htmlFor='ciud'>Ciudad</label>
+										<label htmlFor='cod_ciu_emp'>
+											Ciudad
+										</label>
 										<select
-											{...register1("ciudad")}
+											{...register1("cod_ciu_emp")}
 											className='SELECT'
 											aria-invalid='false'>
 											<option value={0}>
@@ -174,11 +281,13 @@ export const Empresas = () => {
 										/>
 									</p>
 									<p>
-										<label htmlFor='web'>Sitio web</label>
+										<label >Sitio web</label>
 
-										<input
+										<input 
 											type='text'
 											{...register1("web_emp")}
+											
+											
 										/>
 									</p>
 								</div>
@@ -187,7 +296,7 @@ export const Empresas = () => {
 									<textarea
 										maxLength={128}
 										className='maxLength'
-										{...register1("obs_emp")}
+										{...register1("defaultValues.obs_emp")} value={registro.obs_emp}
 									/>
 									<span className='numCarac'>
 										<strong>0</strong> caracteres de{" "}
@@ -247,19 +356,19 @@ export const Empresas = () => {
 								</div>
 								{/*? } ?*/}
 								<div className='contBtns'>
-									<input
+									{/* <input
 										type='button'
 										defaultValue='Guardar información'
 										className='btnDark'
-                    value="Guardar"
-                    onClick={onSubmitpost}
-									/>
+										value='Guardar'
+										onClick={onSubmitpost}
+									/> */}
 									{/*? if($var_inici!='10000') {?*/}
-									<input
+									{/* <input
 										type='button'
 										defaultValue='Eliminar empresa'
 										className='btnDark deleteReg'
-									/>
+									/> */}
 									<a
 										href="crear_sucursal.php?edi=<?=$_REQUEST['edi']?>&edis=<?=encode_this_get('consEdSuc=000');?>"
 										className='btnDark'
@@ -268,25 +377,27 @@ export const Empresas = () => {
 									</a>
 									{/*? } ?*/}
 								</div>
-								<input
+								{/* <input
 									type='hidden'
 									name='edi'
 									id='edi'
 									defaultValue="<?=$_REQUEST['edi']?>"
-								/>
+								/> */}
 							</form>
 						</div>
 					</div>
 				</div>
+			
 			</Modal>
 
 			<section className='gContent'>
-				{/* <pre>{JSON.stringify(dataResultado, null, 2)}</pre> */}
+				<pre>{JSON.stringify(idregistro, null, 2)}</pre>
+				{/* <pre>{JSON.stringify(registro, null, 2)}</pre> */}
 				<div className='gTitle'>
 					<h2>Panel de control empresas</h2>
 					<div className='contBtns'>
 						<a
-							onClick={onOpenModal}
+							onClick={crearRegistro}
 							href='#'
 							className='btnDark fancyForm cboxElement'>
 							Crear empresa
@@ -296,7 +407,7 @@ export const Empresas = () => {
 				<div className='gForm triB'>
 					<h2>Buscar</h2>
 					<div>
-						<form onSubmit={onSubmit}>
+						<form onSubmit={onSubmitBuscador}>
 							<p>
 								<label>Nombre de la empresa</label>
 								<input
@@ -376,7 +487,10 @@ export const Empresas = () => {
 										<tr key={index}>
 											<td>
 												<a
-													href={`crear_empresa.php?edi=${item.id}`}
+													onClick={() =>
+														editProduct(item?.id)
+													}
+													href='#'
 													className='fancyForm cboxElement'>
 													{item?.nom_emp}
 												</a>
