@@ -45,17 +45,17 @@ export class Conexion {
 			.then((res) => res.data);
 	}
 
-	// getEditarItem(tabla, data, id) {
-	// 	// console.log(data)
-	// 	return axios
-	// 		.put(URL + tabla + "/" + id, { ...data }, { headers: this.header })
-	// 		.then((res) => res.data);
-	// }
-	// getEliminarItem(tabla, data, id) {
-	// 	return axios
-	// 		.delete(URL + tabla + "/" + id, { headers: this.header })
-	// 		.then((res) => res.data);
-	// }
+	getEditarItem(tabla, data, id) {
+		// console.log(data)
+		return axios
+			.put(URL + tabla + "/" + id, { ...data }, { headers: this.header })
+			.then((res) => res.data);
+	}
+	getEliminarItem(tabla,  id) {
+		return axios
+			.delete(URL + tabla + "/" + id, { headers: this.header })
+			.then((res) => res.data);
+	}
 
 	// getlogin(tabla, data) {
 	// 	// console.log(tabla, data, 'envia crear')

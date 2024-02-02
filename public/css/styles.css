@@ -1088,7 +1088,7 @@ a {
     right: 0px;
     bottom: 0px;
     z-index: 1000;
-    background: rgba(0, 0, 0, 0.5);
+    /* background: rgba(0, 0, 0, 0.5); */
 }
 .gLoading::before {
     content: "";
