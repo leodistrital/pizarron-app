@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
-
-
+import { useForm } from "react-hook-form";
 import { Modal } from "react-responsive-modal";
 import "react-responsive-modal/styles.css";
 import Swal from "sweetalert2";
-import { alertaGuardado ,  alertaconfirmarBorado } from '../../service/alertas';
+import { alertaGuardado, alertaconfirmarBorado } from "../../service/alertas";
+import { Conexion } from "../../service/Conexion";
+import { useAppStore } from "../../stores/app.store";
 
-export const Formulario = () => {
-
-    const defaultValues = {
+export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
+	const defaultValues = {
 		id: "0",
 		nom_emp: "",
 		dir_emp: "",
@@ -21,33 +21,29 @@ export const Formulario = () => {
 		obs_emp: "",
 		cod_pad_emp: "",
 	};
+	const datatable = new Conexion();
 
-    	const [open, setOpen] = useState(false);
-const {
+	const [ciudadesData, setciudadesData] = useState([]);
+
+	const {
 		register: register1,
 		handleSubmit: handleSubmit1,
 		reset: reset1,
 	} = useForm({});
 
-    const [departamentoData, setdepartamentoData] = useState([]);
+	const toogleLoading = useAppStore((state) => state.toogleLoading);
+	const [departamentoData, setdepartamentoData] = useState([]);
 
-
-
-	const crearRegistro = () => {
-		setidregistro(0);
-		reset1({ defaultValues });
-		setOpen(true);
-	};
-
-    const confirmarBorado = () => {
+	const confirmarBorado = () => {
 		alertaconfirmarBorado(Swal, deleteRegistro);
 	};
 
-    const onCloseModal = () => {
+	const onCloseModal = () => {
 		setOpen(false);
 	};
 
-    useEffect(() => {
+	//PARAMETROS
+	useEffect(() => {
 		datatable
 			.gettable("parametros/ciudades")
 			.then((data) => setciudadesData(data));
@@ -57,34 +53,28 @@ const {
 			.then((data) => setdepartamentoData(data));
 	}, []);
 
-
-    	/**OPERACIONES */
-	//BUSACRDOR
-	const onSubmitBuscador = handleSubmit((data) => {
-		toogleLoading(true);
-		const queryString = Object.keys(data)
-			.map((key) => {
-				return (
-					encodeURIComponent(key) +
-					"=" +
-					encodeURIComponent(data[key].trim())
-				);
-			})
-			.join("&");
-		const rutaApi = Tabla + "?" + queryString;
-		datatable.gettable(rutaApi).then((res) => {
-			setdataResultado(res);
-			toogleLoading(false);
-		});
-	});
+	//CARGA INICIAL
+	useEffect(() => {
+		if (idregistro > 0) {
+			toogleLoading(true);
+			datatable.getItem(Tabla, idregistro).then(({ data }) => {
+				// console.log(data);
+				reset1(data);
+				toogleLoading(false);
+			});
+		} else {
+			reset1(defaultValues);
+		}
+	}, [idregistro]);
 
 	//CREAR Y EDITAR
 	const onSubmitpost = handleSubmit1((data) => {
-		// console.log(data);
 		toogleLoading(true);
+
 		if (idregistro == 0) {
 			datatable.getCrearItem(Tabla, data).then(({ resp }) => {
 				alertaGuardado(resp.status, Swal, setOpen);
+				toogleLoading(false);
 			});
 		} else {
 			// console.log("eta editando");
@@ -92,40 +82,23 @@ const {
 				.getEditarItem(Tabla, data, idregistro)
 				.then(({ resp }) => {
 					alertaGuardado(resp.status, Swal, setOpen);
+					toogleLoading(false);
 				});
 		}
-		toogleLoading(false);
 	});
-
-	//BUSCAR UN ID PARA EDITAR
-	const editProduct = (id = 0) => {
-		// console.log(id);
-		setidregistro(id);
-		if (id > 0) {
-			toogleLoading(true);
-			datatable.getItem(Tabla, id).then(({ data }) => {
-				console.log(data);
-				reset1(data);
-				setOpen(true);
-				toogleLoading(false);
-			});
-		}
-	};
 
 	//ELIMINAR
 	const deleteRegistro = () => {
 		toogleLoading(true);
-		datatable.getEliminarItem(Tabla, idregistro).then((data) => {
+		datatable.getEliminarItem(Tabla, idregistro).then(() => {
 			setOpen(false);
 			toogleLoading(false);
 		});
 	};
-	/**OPERACIONES */
 
-
-  return (
-    <>
-    <Modal
+	return (
+		<>
+			<Modal
 				classNames={{
 					modal: "customModalEmpresas",
 				}}
@@ -151,7 +124,9 @@ const {
 										<label htmlFor='nom'>Nombre</label>
 										<input
 											type='text'
-											{...register1("nom_emp")}
+											{...register1("nom_emp", {
+												required: true,
+											})}
 										/>
 									</p>
 								</div>
@@ -285,26 +260,27 @@ const {
 									/>
 
 									{idregistro > 0 && (
-										<input
-											type='button'
-											defaultValue='Eliminar  empresa'
-											className='btnDark  deleteReg'
-											onClick={confirmarBorado}
-										/>
+										<>3
+											<input
+												type='button'
+												defaultValue='Eliminar  empresa'
+												className='btnDark  deleteReg'
+												onClick={confirmarBorado}
+											/>
+											<a
+												href='#'
+												className='btnDark'
+												id='toggleFC'>
+												Crear sucursal
+											</a>
+										</>
 									)}
-
-									<a
-										href='#'
-										className='btnDark'
-										id='toggleFC'>
-										Crear sucursal
-									</a>
 								</div>
 							</form>
 						</div>
 					</div>
 				</div>
 			</Modal>
-    </>
-  )
-}
+		</>
+	);
+};

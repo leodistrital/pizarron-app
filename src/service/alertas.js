@@ -27,8 +27,8 @@ export const alertaconfirmarBorado = ( Swal, deleteRegistro) => {
 			},
 		}).then((result) => {
 			if (result.isConfirmed) {
-                console.log('confirmado ');
-                console.log(deleteRegistro);
+                // console.log('confirmado ');
+                // console.log(deleteRegistro);
 				deleteRegistro();
 				
 			}
