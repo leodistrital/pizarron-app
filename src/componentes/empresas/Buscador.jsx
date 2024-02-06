@@ -11,7 +11,9 @@ export const Buscador = ({onSubmitBuscador ,register ,ciudadesData , reset}) => 
 								<input
 									type='text'
 									placeholder='|'
-									{...register("nombre")}
+									{...register("nombre" , {
+												required: true,
+											} )}
 								/>
 							</p>
 							<div className='col2'>

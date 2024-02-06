@@ -3,12 +3,11 @@ import { useForm } from "react-hook-form";
 import { Modal } from "react-responsive-modal";
 import "react-responsive-modal/styles.css";
 import Swal from "sweetalert2";
-import { alertaGuardado, alertaconfirmarBorado } from "../../service/alertas";
-import { Conexion } from "../../service/Conexion";
-import { useAppStore } from "../../stores/app.store";
-import { Sucursal } from '../../pages/Sucursal';
+import { alertaGuardado, alertaconfirmarBorado } from "../service/alertas";
+import { Conexion } from "../service/Conexion";
+import { useAppStore } from "../stores/app.store";
 
-export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
+export const Sucursal = ({ idregistro, open, setOpen, Tabla, codigoPadre }) => {
 	const defaultValues = {
 		id: "0",
 		nom_emp: "",
@@ -20,10 +19,11 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 		web_emp: "",
 		cod_sec_emp: "",
 		obs_emp: "",
-		cod_pad_emp: "",
+		cod_pad_emp: codigoPadre,
 		sucursales: [],
 	};
 	const datatable = new Conexion();
+
 
 	const [ciudadesData, setciudadesData] = useState([]);
 
@@ -37,8 +37,7 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 	const toogleLoading = useAppStore((state) => state.toogleLoading);
 	const [departamentoData, setdepartamentoData] = useState([]);
 
-	const [opensucursal, setopensucursal] = useState(false);
-	const [idsucursal, setidsucursal] = useState(0);
+	const [opensucursal, setopensucursal] = useState(false)
 
 	const confirmarBorado = () => {
 		alertaconfirmarBorado(Swal, deleteRegistro);
@@ -53,10 +52,6 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 		datatable
 			.gettable("parametros/ciudades")
 			.then((data) => setciudadesData(data));
-
-		datatable
-			.gettable("parametros/departamentos")
-			.then((data) => setdepartamentoData(data));
 	}, []);
 
 	//CARGA INICIAL
@@ -72,11 +67,12 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 		} else {
 			reset1(defaultValues);
 		}
-	}, [idregistro ,open , opensucursal]);
+	}, [idregistro , open]);
 
 	//CREAR Y EDITAR
 	const onSubmitpost = handleSubmit1((data) => {
-		toogleLoading(true);
+		console.log(data);
+		// toogleLoading(true);
 
 		if (idregistro == 0) {
 			datatable.getCrearItem(Tabla, data).then(({ resp }) => {
@@ -103,13 +99,6 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 		});
 	};
 
-	const editSucursal = (id = 0) => {
-		console.log(id, "open sucursal");
-		setidsucursal(id);
-		// console.log(setopensucursal);
-		setopensucursal(true);
-	};
-
 	return (
 		<>
 			<Modal
@@ -130,7 +119,7 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 					</span>
 					<div className='gForm triB'>
 						{/* <pre>{JSON.stringify(idregistro, null, 2)}</pre> */}
-						<h2>Formulario empresas  </h2>
+						<h2>Formulario sucursal </h2>
 						<div>
 							<form onSubmit={onSubmitpost}>
 								<div className='col2'>
@@ -142,32 +131,12 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 												required: true,
 											})}
 										/>
-									</p>
-								</div>
-								<div className='col2'>
-									<p>
-										<label htmlFor='cod_dep_emp'>
-											Departamento
-										</label>
-										<select
-											{...register1("cod_dep_emp")}
-											className='SELECT '
-											aria-invalid='false'>
-											<option value={0}>
-												Seleccione..
-											</option>
-											{departamentoData.map(
-												(item, index) => {
-													return (
-														<option
-															key={index}
-															value={item?.id}>
-															{item?.nom_dep}
-														</option>
-													);
-												}
-											)}
-										</select>
+										<input
+											type='hidden'
+											{...register1("cod_pad_emp", {
+												required: true,
+											})}
+										/>
 									</p>
 									<p>
 										<label htmlFor='cod_ciu_emp'>
@@ -192,6 +161,7 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 										</select>
 									</p>
 								</div>
+						
 								<div className='col2'>
 									<p>
 										<label htmlFor='dir'>Dirección</label>
@@ -241,37 +211,6 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 									</span>
 								</p>
 
-								<div className='listSucur'>
-									<label>Listado de sucursales:</label>
-									{/* <pre>{JSON.stringify(getValues('sucursales').length, null, 2)}</pre> */}
-									<ul>
-										{
-											// if(getValues('sucursales').length > 0){
-											getValues("sucursales").map(
-												(item, index) => {
-													return (
-														<li key={index}>
-															<a
-																onClick={() => editSucursal(item.id)}
-																href='#'
-																className='openEditSurc'>
-																{item.nom_emp}
-															</a>
-														</li>
-													);
-												}
-											)
-										}
-										{/* <li>
-											<a
-												href='#'
-												className='openEditSurc'>
-												MI sucirsal
-											</a>
-										</li> */}
-									</ul>
-								</div>
-
 								<div className='dateModi'>
 									<p>
 										<strong>Fecha de creación</strong>
@@ -295,17 +234,10 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 										<>
 											<input
 												type='button'
-												defaultValue='Eliminar  empresa'
+												defaultValue='Eliminar  sucursal'
 												className='btnDark  deleteReg'
 												onClick={confirmarBorado}
 											/>
-											<a
-												onClick={() => editSucursal(0)}
-												href='#'
-												className='btnDark'
-												id='toggleFC'>
-												Crear sucursal 
-											</a>
 										</>
 									)}
 								</div>
@@ -313,21 +245,7 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 						</div>
 					</div>
 				</div>
-				<Sucursal idregistro={idsucursal}
-				open={opensucursal}
-				setOpen={setopensucursal}
-				Tabla={Tabla} 		
-				codigoPadre={idregistro}
-				/>
 			</Modal>
-
-			
-		
 		</>
 	);
 };
-
-/**
- * idregistro, open, setOpen, Tabla
- * 
- */
