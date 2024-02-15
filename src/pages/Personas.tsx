@@ -11,7 +11,7 @@ import { Resultados } from "../componentes/personas/Resultados";
 export const Personas = () => {
 
 const [idregistro, setidregistro] = useState(0);
-const [open, setOpen] = useState(true);
+const [open, setOpen] = useState(false);
 const Tabla = "personas";
 const datatable = new Conexion();
 const [dataResultado, setdataResultado] = useState([]);
@@ -71,7 +71,7 @@ const [segmentosData, setsegmentosData] = useState([]);
     <h2>Panel de control personas</h2>
     <div className="contBtns">
       <a
-        href="crear_persona.php?ini=10000"
+        href="#"
         className="btnDark fancyForm cboxElement"
         onClick={() => editProduct(0)}
       >

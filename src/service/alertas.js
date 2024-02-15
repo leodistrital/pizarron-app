@@ -34,3 +34,27 @@ export const alertaconfirmarBorado = ( Swal, deleteRegistro) => {
 			}
 		});
 };
+
+
+
+export const alertaconfirmarBoradoConID = ( Swal, deleteRegistro,id) => {
+	Swal.fire({
+			title:
+				"<p>Este registro se eliminará del sistema. <br>¿Esta seguro de eliminar el registro?</p>",
+			showDenyButton: true,
+			confirmButtonText: `Si, eliminar registro`,
+			denyButtonText: `No, cancelar esta acción`,
+			customClass: {
+				confirmButton: "btnDarkcustom",
+				denyButton: "btnDarkcustom",
+				title: "titulocustom",
+			},
+		}).then((result) => {
+			if (result.isConfirmed) {
+                // console.log('confirmado ');
+                // console.log(deleteRegistro);
+				deleteRegistro(id);
+				
+			}
+		});
+};

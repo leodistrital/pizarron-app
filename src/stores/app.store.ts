@@ -8,7 +8,7 @@ interface AppState {
 	isloading: boolean;
 	logout: () => void;
 	iniciar: (mail: string, token: string) => void;
-	toogleLoading: (estado:boolean) => void;
+	toogleLoading: (estado: boolean) => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -28,8 +28,8 @@ export const useAppStore = create<AppState>((set) => ({
 		set(() => ({ login: true, mail: mail, token: token })),
 
 	toogleLoading: (estado) => {
-    set(() => ({ 
-    isloading: estado
-   }))},
-
+		set(() => ({
+			isloading: estado,
+		}));
+	},
 }));

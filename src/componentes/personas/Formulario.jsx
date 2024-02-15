@@ -1,18 +1,23 @@
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import { Modal } from "react-responsive-modal";
 import "react-responsive-modal/styles.css";
 import Swal from "sweetalert2";
-import { alertaGuardado, alertaconfirmarBorado } from "../../service/alertas";
+import {
+	alertaGuardado,
+	alertaconfirmarBorado,
+	alertaconfirmarBoradoConID,
+} from "../../service/alertas";
 import { Conexion } from "../../service/Conexion";
 import { useAppStore } from "../../stores/app.store";
-import { Sucursal } from "../../pages/Sucursal";
+import { Conyugue } from "../../pages/Conyugue";
+import { Asistente } from "../../pages/Asistente";
 
 export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 	const defaultValues = {
 		id: "",
 		cod_tit_per: "",
-		nom_per: "RANCHESCA SUSANA",
+		nom_per: "",
 		ape_per: "",
 		cod_gen_per: "",
 		pro_per: "",
@@ -45,6 +50,9 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 		nom_emp: "",
 		nom_sec: "",
 		nom_mun: null,
+		asistentes: [],
+		segementos: [],
+		segmentosdinamicos: [],
 	};
 	const datatable = new Conexion();
 
@@ -53,12 +61,13 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 		handleSubmit: handleSubmit1,
 		reset: reset1,
 		getValues,
+		control,
 	} = useForm({ defaultValues });
 
 	const toogleLoading = useAppStore((state) => state.toogleLoading);
 
-	const [opensucursal, setopensucursal] = useState(false);
-	const [idsucursal, setidsucursal] = useState(0);
+	// const [opensucursal, setopensucursal] = useState(false);
+	// const [idsucursal, setidsucursal] = useState(0);
 
 	//seltetores
 	const [TituloPersona, setTituloPersona] = useState([]);
@@ -70,10 +79,20 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 	const [departamentoData, setdepartamentoData] = useState([]);
 	const [ciudadesData, setciudadesData] = useState([]);
 	const [eventosData, seteventosData] = useState([]);
+	// const [idconyugue, setidconyugue] = useState(0);
+	const [cambioAsistente, setcambioAsistente] = useState(0);
+	const [openconyugue, setopenconyugue] = useState(false);
+	const [openAsistente, setopenAsistente] = useState(false);
+	const [asistenteActivo, setasistenteActivo] = useState(0);
 
-	const confirmarBorado = () => {
-		alertaconfirmarBorado(Swal, deleteRegistro);
-	};
+	const { fields, append, remove } = useFieldArray({
+		name: "segementos",
+		control: control,
+	});
+
+	// const confirmarBorado = () => {
+	// 	alertaconfirmarBorado(Swal, deleteRegistro);
+	// };
 
 	const onCloseModal = () => {
 		setOpen(false);
@@ -81,6 +100,7 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 
 	//PARAMETROS
 	useEffect(() => {
+		console.log({ idregistro });
 		datatable
 			.gettable("parametros/parametros/titulo_persona")
 			.then((data) => setTituloPersona(data));
@@ -109,6 +129,8 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 		datatable
 			.gettable("parametros/eventos")
 			.then((data) => seteventosData(data));
+
+		// console.log(getValues());
 	}, []);
 
 	//CARGA INICIAL
@@ -118,18 +140,19 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 			datatable.getItem(Tabla, idregistro).then(({ data }) => {
 				// console.log(data);
 				reset1(data);
-				console.log(getValues("sucursales").length);
+				// console.log(getValues("sucursales").length);
 				toogleLoading(false);
 			});
 		} else {
 			reset1(defaultValues);
 		}
-	}, [idregistro, open, opensucursal]);
+		// console.log(idregistro);
+	}, [idregistro, open, openconyugue, cambioAsistente, openAsistente]);
 
 	//CREAR Y EDITAR
 	const onSubmitpost = handleSubmit1((data) => {
+		console.log(data);
 		toogleLoading(true);
-
 		if (idregistro == 0) {
 			datatable.getCrearItem(Tabla, data).then(({ resp }) => {
 				alertaGuardado(resp.status, Swal, setOpen);
@@ -146,20 +169,63 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 		}
 	});
 
+	const editContygue = () => {
+		//  console.log( getValues()  );
+		//  setidconyugue(getValues('coy_per'));
+		// console.log(idconyugue, "open conyugue");
+		// // console.log(setopensucursal);
+		setopenconyugue(true);
+	};
+	const editAsistente = (id = 0) => {
+		setasistenteActivo(id);
+		//  console.log( getValues()  );
+		//  setidconyugue(getValues('coy_per'));
+		// console.log(idconyugue, "open conyugue");
+		// // console.log(setopensucursal);
+		setopenAsistente(true);
+	};
+
 	//ELIMINAR
-	const deleteRegistro = () => {
+	// const deleteRegistro = () => {
+	// 	toogleLoading(true);
+	// 	datatable.getEliminarItem(Tabla, idregistro).then(() => {
+	// 		setOpen(false);
+	// 		toogleLoading(false);
+	// 	});
+	// };
+
+	// const editSucursal = (id = 0) => {
+	// 	console.log(id, "open sucursal");
+	// 	setidsucursal(id);
+	// 	// console.log(setopensucursal);
+	// 	setopensucursal(true);
+	// };
+
+	const crearAsistente = (idregistro) => {
+		const dataAsistemte = {
+			asis_per: 1,
+			coy_per: idregistro,
+		};
+		console.log(idregistro, dataAsistemte);
 		toogleLoading(true);
-		datatable.getEliminarItem(Tabla, idregistro).then(() => {
-			setOpen(false);
+		datatable.getCrearItem(Tabla, dataAsistemte).then(({ resp }) => {
+			// alertaGuardado(resp.status, Swal, setOpen);
+			setcambioAsistente(cambioAsistente + 1);
 			toogleLoading(false);
+			console.log(cambioAsistente);
 		});
 	};
 
-	const editSucursal = (id = 0) => {
-		console.log(id, "open sucursal");
-		setidsucursal(id);
-		// console.log(setopensucursal);
-		setopensucursal(true);
+	const confirmarBoradoAsistente = (id) => {
+		alertaconfirmarBoradoConID(Swal, deleteAsistente, id);
+	};
+
+	const deleteAsistente = (id) => {
+		toogleLoading(true);
+		datatable.getEliminarItem(Tabla, id).then(() => {
+			setcambioAsistente(cambioAsistente - 1);
+			toogleLoading(false);
+		});
 	};
 
 	return (
@@ -188,15 +254,11 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 								id='formPersona'
 								method='post'
 								noValidate='novalidate'>
-								<input
-									type='hidden'
-									name='ultimo_id'
-									id='ultimo_id'
-									defaultValue={71681}
-								/>
 								<div className='contTwo'>
 									<p>
-										<label htmlFor='tit-per'>Título</label>
+										<label htmlFor='cod_tit_per'>
+											Título
+										</label>
 										<select
 											{...register1("cod_tit_per")}
 											className='SELECT valid'
@@ -295,12 +357,17 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 										</p>
 										<p>
 											<label>&nbsp;</label>
-											<a
-												href='crear_conyuge.php?codigo_maestro=71681'
-												className='btnExtra'
-												id='toggleFC'>
-												Información Cónyuge
-											</a>
+											{idregistro > 0 && (
+												<a
+													onClick={() =>
+														editContygue()
+													}
+													href='#'
+													className='btnExtra'
+													id='toggleFC'>
+													Información Cónyuge{" "}
+												</a>
+											)}
 										</p>
 									</div>
 									<p>
@@ -409,14 +476,63 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 										/>
 									</p>
 									<p className='cRight Btn-crea-asistente '>
-										<a
-											href='#'
-											className='btnExtra'
-											id='btn-newasis'>
-											Añadir Asistente
-										</a>
+										{idregistro > 0 && (
+											<a
+												href='#'
+												className='btnExtra'
+												id='btn-newasis'
+												onClick={() => {
+													crearAsistente(idregistro);
+												}}>
+												Añadir Asistente
+											</a>
+										)}
+										{/* 
+										<pre>
+											{JSON.stringify(
+												getValues("asistentes"),
+												null,
+												2
+											)}
+										</pre> */}
 									</p>
-									<div className='div-asis'></div>
+									<div className='div-asis'>
+										{getValues("asistentes").map(
+											(item, index) => {
+												return (
+													<p
+														key={index}
+														className='model-asis'
+														id={`div_sis_${item?.id}`}>
+														<label>&nbsp;</label>
+														<a
+															onClick={() => {
+																editAsistente(
+																	item?.id
+																);
+															}}
+															href='#'
+															className='btnExtra abrir_fan_asis'>
+															Información
+															Asistente
+														</a>{" "}
+														{item?.nom_per}{" "}
+														{item?.ape_per}
+														<span
+															className='remove'
+															onClick={() => {
+																confirmarBoradoAsistente(
+																	item?.id
+																);
+															}}>
+															{" "}
+															x{" "}
+														</span>
+													</p>
+												);
+											}
+										)}
+									</div>
 									<p>
 										<label htmlFor='sect-per'>Sector</label>
 										<select
@@ -437,47 +553,80 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 											})}
 										</select>
 									</p>
+
+									{/* esta es la parte de segmentos */}
+									{/* esta es la parte de segmentos */}
+									{/* esta es la parte de segmentos */}
+									{/* esta es la parte de segmentos */}
+									{/* esta es la parte de segmentos */}
+									{/* esta es la parte de segmentos */}
+
+
 									<ul id='contSegm' className='hiddenB'>
-										<li>
-											<label htmlFor='segm-per'>
-												Segmentos
-											</label>
+										<li className='hidden'>
+											{fields?.length > 0 && (
+												<label htmlFor='segm-per'>Segmentos	</label>
+											)}
 										</li>
-										<li className='contRemove'>
-											<select
-												{...register1("segmento")}
-												className='SELECT valid'
-												aria-invalid='false'>
-												<option value={0}>
-													Seleccione..
-												</option>
-												{segmentos.map(
-													(item, index) => {
-														return (
-															<option
-																key={index}
-																value={
-																	item?.id
-																}>
-																{item?.nom_seg}
-															</option>
-														);
-													}
-												)}
-											</select>
-											<span className='btnMas'>+</span>
-										</li>
+
+										<li></li>
+
+										{fields.map((item, index) => {
+											return (
+												<li
+													key={item.id}
+													className='contRemove'>
+													<select
+														{...register1(
+															`segementos.${index}.cod_seg_dse`
+														)}
+														className='SELECT valid'
+														aria-invalid='false'>
+														<option value={0}>
+															Seleccione..
+														</option>
+														{segmentos.map(
+															(item, index) => {
+																return (
+																	<option
+																		key={
+																			index
+																		}
+																		value={
+																			item?.id
+																		}>
+																		{
+																			item?.nom_seg
+																		}
+																	</option>
+																);
+															}
+														)}
+													</select>
+													<span
+														className='remove'
+														onClick={() => {
+															remove(index);
+														}}>
+														x
+													</span>
+												</li>
+											);
+										})}
 									</ul>
 									<p className='cRight'>
 										<a
-											href='#contSegm'
+											onClick={() => {
+											append({ cod_seg_dse: 0, cod_per_dse:idregistro  });
+										}}
+											href='#'
 											className='btnExtra addField'>
 											Añadir segmento adicional a esta
 											persona
 										</a>
 									</p>
 								</div>
-								
+
 								<div className='contTwo'>
 									<ul id='contEvent' className='hiddenB'>
 										<li>
@@ -537,12 +686,12 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 										id='total_eventos'
 										name='total_eventos'
 									/>
-									<button
+									{/* <button
 										type='button'
-										onclick='temporal()'
+										onClick='temporal()'
 										style={{ display: "none" }}>
 										Click Me!
-									</button>
+									</button> */}
 									<p className='cRight'>
 										<a
 											href='#contEvent'
@@ -677,9 +826,7 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 											placeholder='|'
 											maxLength={500}
 											className='maxLength'
-											id='obs-per'
-											name='obs-per'
-											defaultValue={""}
+											{...register1("obs_per")}
 										/>
 										<span className='numCarac'>
 											<strong>0</strong> caracteres de{" "}
@@ -687,16 +834,14 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 										</span>
 									</p>
 									<p>
-										<label htmlFor='obs-hebeas'>
+										<label htmlFor='hab_per'>
 											Habeas data
 										</label>
 										<textarea
 											placeholder='|'
 											maxLength={128}
 											className='maxLength'
-											id='obs-hebeas'
-											name='obs-hebeas'
-											defaultValue={""}
+											{...register1("hab_per")}
 										/>
 									</p>
 								</div>
@@ -708,8 +853,9 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 								<div className='contBtns'>
 									<input
 										type='submit'
-										defaultValue='Guardar información'
 										className='btnDark'
+										value='Guardar'
+										onClick={onSubmitpost}
 									/>
 								</div>
 							</form>
@@ -870,13 +1016,30 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 						</div>
 					</div> */}
 				</div>
-				{/* <Sucursal
-					idregistro={idsucursal}
-					open={opensucursal}
-					setOpen={setopensucursal}
+				{/* 
+			<button
+        type="button"
+        onClick={() => {
+          console.log( getValues()  );
+         
+        }}
+      >
+        Get Values
+      </button> */}
+				<Conyugue
+					idregistro={getValues("conyugue")}
+					open={openconyugue}
+					setOpen={setopenconyugue}
 					Tabla={Tabla}
 					codigoPadre={idregistro}
-				/> */}
+				/>
+				<Asistente
+					idregistro={asistenteActivo}
+					open={openAsistente}
+					setOpen={setopenAsistente}
+					Tabla={Tabla}
+					codigoPadre={idregistro}
+				/>
 			</Modal>
 		</>
 	);
