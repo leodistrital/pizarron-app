@@ -13,6 +13,8 @@ import { useAppStore } from "../../stores/app.store";
 import { Conyugue } from "../../pages/Conyugue";
 import { Asistente } from "../../pages/Asistente";
 
+import { DevTool } from "@hookform/devtools";
+
 export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 	const defaultValues = {
 		id: "",
@@ -52,12 +54,14 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 		nom_mun: null,
 		asistentes: [],
 		segementos: [],
-		segmentosdinamicos: [],
+		eventos: [],
+		empresas: [],
 	};
 	const datatable = new Conexion();
 
 	const {
 		register: register1,
+		setValue: setValue1,
 		handleSubmit: handleSubmit1,
 		reset: reset1,
 		getValues,
@@ -76,6 +80,7 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 	const [sectores, setsectores] = useState([]);
 	const [segmentos, setsegmentos] = useState([]);
 	const [empresasData, setempresasData] = useState([]);
+	const [sucursalesData, setsucursalesData] = useState([]);
 	const [departamentoData, setdepartamentoData] = useState([]);
 	const [ciudadesData, setciudadesData] = useState([]);
 	const [eventosData, seteventosData] = useState([]);
@@ -90,9 +95,23 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 		control: control,
 	});
 
-	// const confirmarBorado = () => {
-	// 	alertaconfirmarBorado(Swal, deleteRegistro);
-	// };
+	const {
+		fields: fieldseventos,
+		append: appendeventos,
+		remove: removeeentos,
+	} = useFieldArray({
+		name: "eventos",
+		control: control,
+	});
+
+	const {
+		fields: fieldsempresa,
+		append: appendempresa,
+		remove: removeempresa,
+	} = useFieldArray({
+		name: "empresas",
+		control: control,
+	});
 
 	const onCloseModal = () => {
 		setOpen(false);
@@ -123,9 +142,14 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 		datatable
 			.gettable("parametros/segmento")
 			.then((data) => setsegmentos(data));
-		datatable
-			.gettable("parametros/empresas")
-			.then((data) => setempresasData(data));
+		datatable.gettable("parametros/empresas").then((data) => {
+			const empresas = data.filter((empresa) => empresa.cod_pad_emp == 0);
+			setempresasData(empresas);
+			const empresasSucursal = data.filter(
+				(empresa) => empresa.cod_pad_emp != 0
+			);
+			setsucursalesData(empresasSucursal);
+		});
 		datatable
 			.gettable("parametros/eventos")
 			.then((data) => seteventosData(data));
@@ -152,36 +176,28 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 	//CREAR Y EDITAR
 	const onSubmitpost = handleSubmit1((data) => {
 		console.log(data);
-		toogleLoading(true);
-		if (idregistro == 0) {
-			datatable.getCrearItem(Tabla, data).then(({ resp }) => {
-				alertaGuardado(resp.status, Swal, setOpen);
-				toogleLoading(false);
-			});
-		} else {
-			// console.log("eta editando");
-			datatable
-				.getEditarItem(Tabla, data, idregistro)
-				.then(({ resp }) => {
-					alertaGuardado(resp.status, Swal, setOpen);
-					toogleLoading(false);
-				});
-		}
+		// toogleLoading(true);
+		// if (idregistro == 0) {
+		// 	datatable.getCrearItem(Tabla, data).then(({ resp }) => {
+		// 		alertaGuardado(resp.status, Swal, setOpen);
+		// 		toogleLoading(false);
+		// 	});
+		// } else {
+		// 	// console.log("eta editando");
+		// 	datatable
+		// 		.getEditarItem(Tabla, data, idregistro)
+		// 		.then(({ resp }) => {
+		// 			alertaGuardado(resp.status, Swal, setOpen);
+		// 			toogleLoading(false);
+		// 		});
+		// }
 	});
 
 	const editContygue = () => {
-		//  console.log( getValues()  );
-		//  setidconyugue(getValues('coy_per'));
-		// console.log(idconyugue, "open conyugue");
-		// // console.log(setopensucursal);
 		setopenconyugue(true);
 	};
 	const editAsistente = (id = 0) => {
 		setasistenteActivo(id);
-		//  console.log( getValues()  );
-		//  setidconyugue(getValues('coy_per'));
-		// console.log(idconyugue, "open conyugue");
-		// // console.log(setopensucursal);
 		setopenAsistente(true);
 	};
 
@@ -554,18 +570,12 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 										</select>
 									</p>
 
-									{/* esta es la parte de segmentos */}
-									{/* esta es la parte de segmentos */}
-									{/* esta es la parte de segmentos */}
-									{/* esta es la parte de segmentos */}
-									{/* esta es la parte de segmentos */}
-									{/* esta es la parte de segmentos */}
-
-
 									<ul id='contSegm' className='hiddenB'>
 										<li className='hidden'>
 											{fields?.length > 0 && (
-												<label htmlFor='segm-per'>Segmentos	</label>
+												<label htmlFor='segm-per'>
+													Segmentos
+												</label>
 											)}
 										</li>
 
@@ -617,12 +627,14 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 									<p className='cRight'>
 										<a
 											onClick={() => {
-											append({ cod_seg_dse: 0, cod_per_dse:idregistro  });
-										}}
+												append({
+													cod_seg_dse: 0,
+													cod_per_dse: idregistro,
+												});
+											}}
 											href='#'
 											className='btnExtra addField'>
-											Añadir segmento adicional a esta
-											persona
+											Añadir segmento a esta persona
 										</a>
 									</p>
 								</div>
@@ -634,75 +646,121 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 												Añadir eventos
 											</label>
 										</li>
-										<li
-											className='contRemove'
-											style={{ display: "none" }}>
-											<div className='col2'>
-												<p>
-													<select
-														{...register1(
-															"segmento"
-														)}
-														className='SELECT valid'
-														aria-invalid='false'>
-														<option value={0}>
-															Seleccione..
-														</option>
-														{eventosData.map(
-															(item, index) => {
-																return (
-																	<option
-																		key={
-																			index
-																		}
-																		value={
-																			item?.id
-																		}>
-																		{
-																			item?.nom_eve
-																		}
-																	</option>
-																);
-															}
-														)}
-													</select>
-												</p>
-												<p>
-													<label className='gCheck'>
-														Aplica protocolo
-														<input
-															type='checkbox'
-															id='prot-per'
-															name='prot-per'
-														/>
-													</label>
-												</p>
-											</div>
-											<span className='btnMas'>+</span>
-										</li>
+										<li></li>
+										{fieldseventos.map((item, index) => {
+											return (
+												<li
+													className='contRemove'
+													key={item.id}>
+													<div className='col2'>
+														<p>
+															<select
+																{...register1(
+																	`eventos.${index}.cod_eve_devp`
+																)}
+																className='SELECT valid'
+																aria-invalid='false'>
+																<option
+																	value={0}>
+																	Seleccione..
+																</option>
+																{eventosData.map(
+																	(
+																		item,
+																		index
+																	) => {
+																		return (
+																			<option
+																				key={
+																					index
+																				}
+																				value={
+																					item?.id
+																				}>
+																				{
+																					item?.nom_eve
+																				}
+																			</option>
+																		);
+																	}
+																)}
+															</select>
+														</p>
+														<p>
+															<label className='gCheck'>
+																Aplica protocolo
+																<input
+																	{...register1(
+																		`eventos.${index}.pro_devp1`
+																	)}
+																	type='checkbox'
+																	onChange={(
+																		e
+																	) => {
+																		setValue1(
+																			`eventos.${index}.pro_devp`,
+																			Number(
+																				e
+																					.target
+																					.checked
+																			)
+																		);
+																		console.log(
+																			getValues(
+																				"eventos"
+																			)
+																		);
+																	}}
+																	name={`eventos.${index}.pro_devp`}
+																	defaultChecked={parseInt(
+																		item.pro_devp,
+																		2
+																	)}
+																/>
+																<input
+																	style={{
+																		marginLeft:
+																			"15px",
+																	}}
+																	{...register1(
+																		`eventos.${index}.pro_devp`
+																	)}
+																	type='hidden'
+																	name={`eventos.${index}.pro_devp`}
+																/>
+															</label>
+														</p>
+													</div>
+													<span
+														className='remove'
+														onClick={() => {
+															removeeentos(index);
+														}}>
+														x
+													</span>
+												</li>
+											);
+										})}
 									</ul>
-									<input
-										type='hidden'
-										id='total_eventos'
-										name='total_eventos'
-									/>
-									{/* <button
-										type='button'
-										onClick='temporal()'
-										style={{ display: "none" }}>
-										Click Me!
-									</button> */}
+
 									<p className='cRight'>
 										<a
-											href='#contEvent'
+											onClick={() => {
+												appendeventos({
+													cod_eve_devp: 0,
+													pro_devp: false,
+												});
+											}}
+											href='#'
 											className='btnExtra addField'>
-											Añadir eventos adicionales a esta
-											persona
+											Añadir eventos a esta persona
 										</a>
 									</p>
 									<p>&nbsp;</p>
+
 									<ul id='contEmpre' className='hiddenB'>
-										<li className='contRemove'>
+										<li></li>
+										{/* <li className='contRemove'>
 											<p>
 												<label>Empresa</label>
 												<select
@@ -802,22 +860,185 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 												/>
 											</p>
 											<span className='btnMas'>+</span>
-										</li>
+										</li> */}
+
+										{fieldsempresa.map((item, index) => {
+											return (
+												<li
+													className='contRemove'
+													key={item.id}>
+													<p>
+														<label>Empresa</label>
+
+														<select
+															{...register1(
+																`empresas.${index}.cod_emp`
+															)}
+															className='SELECT valid'
+															aria-invalid='false'>
+															<option value={0}>
+																Seleccione..
+															</option>
+															{empresasData.map(
+																(
+																	item,
+																	index
+																) => {
+																	return (
+																		<option
+																			key={
+																				index
+																			}
+																			value={
+																				item?.id
+																			}>
+																			{
+																				item?.nom_emp
+																			}
+																		</option>
+																	);
+																}
+															)}
+														</select>
+													</p>
+													<p>
+														<label>Sucursal</label>
+														<select
+															{...register1(
+																`empresas.${index}.cod_suc`
+															)}
+															disabled=''>
+															<option value={0}>
+																Seleccione...
+															</option>
+															{sucursalesData.map(
+																(
+																	item,
+																	index
+																) => {
+																	return (
+																		<option
+																			key={
+																				index
+																			}
+																			value={
+																				item?.id
+																			}>
+																			{
+																				item?.nom_emp
+																			}
+																		</option>
+																	);
+																}
+															)}
+														</select>
+													</p>
+													<p>
+														<label>
+															<input
+																type='checkbox'
+																{...register1(
+																	`empresas.${index}.pri_dpe`
+																)}
+																className='checkDireccion'
+																defaultValue=''
+															/>
+															Empresa principal
+														</label>
+													</p>
+													<p>
+														<label>
+															Departamento o
+															sección
+														</label>
+														<input
+															type='text'
+															placeholder='|'
+															{...register1(
+																`empresas.${index}.dep_dep`
+															)}
+														/>
+													</p>
+													<p>
+														<label>Cargo</label>
+														<input
+															type='text'
+															placeholder='|'
+															{...register1(
+																`empresas.${index}.car_dpe`
+															)}
+														/>
+													</p>
+													<p>
+														<label>
+															Correo electrónico
+															corporativo
+														</label>
+														<input
+															type='text'
+															placeholder='|'
+															{...register1(
+																`empresas.${index}.mail_dpe`
+															)}
+														/>
+													</p>
+													<p>
+														<label>
+															Teléfono oficina
+														</label>
+														<input
+															type='text'
+															placeholder='|'
+															{...register1(
+																`empresas.${index}.tel_dpe`
+															)}
+														/>
+													</p>
+													<p>
+														<label>Direccion</label>
+														<input
+															type='text'
+															placeholder='|'
+															{...register1(
+																`empresas.${index}.dir_dpe`
+															)}
+														/>
+													</p>
+													<span
+														className='remove'
+														onClick={() => {
+															removeempresa(
+																index
+															);
+														}}>
+														x
+													</span>
+												</li>
+											);
+										})}
 									</ul>
 									<p className='cRight'>
 										<a
-											href='#contEmpre'
+											onClick={() => {
+												appendempresa({
+													car_dpe: "",
+													cod_emp: 0,
+													cod_eve_devp: 0,
+													cod_suc: 0,
+													dep_dep: "",
+													dir_dpe: "",
+													mail_dpe: "",
+													pri_dpe: false,
+													tel_dpe: "",
+												});
+												getValues("empresas");
+											}}
+											href='#'
 											className='btnExtra addField'>
 											Añadir empresa
 										</a>
 									</p>
-									<p>&nbsp;</p>
-									<input
-										id='arreglo_empesa_caja'
-										name='arreglo_empesa_caja'
-										type='hidden'
-									/>
-									{/*<button type="button" onClick="verificar_empre()" >Click Me!</button>*/}
+
 									<p>
 										<label htmlFor='obs-per'>
 											Observaciones
@@ -829,7 +1050,7 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 											{...register1("obs_per")}
 										/>
 										<span className='numCarac'>
-											<strong>0</strong> caracteres de{" "}
+											<strong>0</strong> caracteres de
 											<strong>500</strong>
 										</span>
 									</p>
@@ -860,172 +1081,11 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 								</div>
 							</form>
 						</div>
+
+						<DevTool control={control} />
 					</div>
-
-					{/* <div className='gForm triB'>
-						
-						<h2>Formulario personas </h2>
-						<div>
-							<form onSubmit={onSubmitpost}>
-								<div className='col2'>
-									<p>
-										<label htmlFor='nom'>Nombre</label>
-										<input
-											type='text'
-											{...register1("nom_emp", {
-												required: true,
-											})}
-										/>
-									</p>
-								</div>
-								<div className='col2'>
-									<p>
-										<label htmlFor='cod_dep_emp'>
-											Departamento
-										</label>
-										<select
-											{...register1("cod_dep_emp")}
-											className='SELECT '
-											aria-invalid='false'>
-											<option value={0}>
-												Seleccione..
-											</option>
-											{departamentoData.map(
-												(item, index) => {
-													return (
-														<option
-															key={index}
-															value={item?.id}>
-															{item?.nom_dep}
-														</option>
-													);
-												}
-											)}
-										</select>
-									</p>
-									<p>
-										<label htmlFor='cod_ciu_emp'>
-											Ciudad
-										</label>
-										<select
-											{...register1("cod_ciu_emp")}
-											className='SELECT'
-											aria-invalid='false'>
-											<option value={0}>
-												Seleccione..
-											</option>
-											{ciudadesData.map((item, index) => {
-												return (
-													<option
-														key={index}
-														value={item?.id}>
-														{item?.nom_mun}
-													</option>
-												);
-											})}
-										</select>
-									</p>
-								</div>
-								<div className='col2'>
-									<p>
-										<label htmlFor='dir'>Dirección</label>
-
-										<input
-											type='text'
-											{...register1("dir_emp")}
-										/>
-									</p>
-									<p>
-										<label htmlFor='tel'>Teléfono</label>
-
-										<input
-											type='text'
-											{...register1("tel_emp")}
-										/>
-									</p>
-								</div>
-								<div className='col2'>
-									<p>
-										<label htmlFor='mail'>Email</label>
-
-										<input
-											type='text'
-											{...register1("mai_emp")}
-										/>
-									</p>
-									<p>
-										<label>Sitio web</label>
-
-										<input
-											type='text'
-											{...register1("web_emp")}
-										/>
-									</p>
-								</div>
-								<p>
-									<label htmlFor='obs'>Observaciones</label>
-									<textarea
-										maxLength={128}
-										className='maxLength'
-										{...register1("obs_emp")}
-									/>
-									<span className='numCarac'>
-										<strong>0</strong> caracteres de{" "}
-										<strong>128</strong>
-									</span>
-								</p>
-
-								<div className='dateModi'>
-									<p>
-										<strong>Fecha de creación</strong>
-										de
-									</p>
-
-									<p>
-										<strong>Última modificación</strong>
-									</p>
-								</div>
-								<div className='contBtns'>
-									<input
-										type='button'
-										defaultValue='Guardar información'
-										className='btnDark'
-										value='Guardar'
-										onClick={onSubmitpost}
-									/>
-
-									{idregistro > 0 && (
-										<>
-											<input
-												type='button'
-												defaultValue='Eliminar  empresa'
-												className='btnDark  deleteReg'
-												onClick={confirmarBorado}
-											/>
-											<a
-												onClick={() => editSucursal(0)}
-												href='#'
-												className='btnDark'
-												id='toggleFC'>
-												Crear sucursal
-											</a>
-										</>
-									)}
-								</div>
-							</form>
-						</div>
-					</div> */}
 				</div>
-				{/* 
-			<button
-        type="button"
-        onClick={() => {
-          console.log( getValues()  );
-         
-        }}
-      >
-        Get Values
-      </button> */}
+
 				<Conyugue
 					idregistro={getValues("conyugue")}
 					open={openconyugue}
@@ -1044,8 +1104,3 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 		</>
 	);
 };
-
-/**
- * idregistro, open, setOpen, Tabla
- *
- */
