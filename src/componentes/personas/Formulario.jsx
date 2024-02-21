@@ -13,7 +13,7 @@ import { useAppStore } from "../../stores/app.store";
 import { Conyugue } from "../../pages/Conyugue";
 import { Asistente } from "../../pages/Asistente";
 
-import { DevTool } from "@hookform/devtools";
+// import { DevTool } from "@hookform/devtools";
 
 export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 	const defaultValues = {
@@ -81,8 +81,10 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 	const [segmentos, setsegmentos] = useState([]);
 	const [empresasData, setempresasData] = useState([]);
 	const [sucursalesData, setsucursalesData] = useState([]);
+	const [sucursalesFiltrado, setsucursalesFiltrado] = useState([]);
 	const [departamentoData, setdepartamentoData] = useState([]);
 	const [ciudadesData, setciudadesData] = useState([]);
+	const [ciudadesDataselecciona, setciudadesDataselecciona] = useState([]);
 	const [eventosData, seteventosData] = useState([]);
 	// const [idconyugue, setidconyugue] = useState(0);
 	const [cambioAsistente, setcambioAsistente] = useState(0);
@@ -132,7 +134,6 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 		datatable
 			.gettable("parametros/ciudades")
 			.then((data) => setciudadesData(data));
-
 		datatable
 			.gettable("parametros/departamentos")
 			.then((data) => setdepartamentoData(data));
@@ -145,10 +146,11 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 		datatable.gettable("parametros/empresas").then((data) => {
 			const empresas = data.filter((empresa) => empresa.cod_pad_emp == 0);
 			setempresasData(empresas);
-			const empresasSucursal = data.filter(
-				(empresa) => empresa.cod_pad_emp != 0
-			);
-			setsucursalesData(empresasSucursal);
+			setsucursalesData(data);
+			// const empresasSucursal = data.filter(
+			// 	(empresa) => empresa.cod_pad_emp != 0
+			// );
+			// setsucursalesData(empresasSucursal);
 		});
 		datatable
 			.gettable("parametros/eventos")
@@ -175,22 +177,22 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 
 	//CREAR Y EDITAR
 	const onSubmitpost = handleSubmit1((data) => {
-		console.log(data);
-		// toogleLoading(true);
-		// if (idregistro == 0) {
-		// 	datatable.getCrearItem(Tabla, data).then(({ resp }) => {
-		// 		alertaGuardado(resp.status, Swal, setOpen);
-		// 		toogleLoading(false);
-		// 	});
-		// } else {
-		// 	// console.log("eta editando");
-		// 	datatable
-		// 		.getEditarItem(Tabla, data, idregistro)
-		// 		.then(({ resp }) => {
-		// 			alertaGuardado(resp.status, Swal, setOpen);
-		// 			toogleLoading(false);
-		// 		});
-		// }
+		// console.log(data);
+		toogleLoading(true);
+		if (idregistro == 0) {
+			datatable.getCrearItem(Tabla, data).then(({ resp }) => {
+				alertaGuardado(resp.status, Swal, setOpen);
+				toogleLoading(false);
+			});
+		} else {
+			// console.log("eta editando");
+			datatable
+				.getEditarItem(Tabla, data, idregistro)
+				.then(({ resp }) => {
+					alertaGuardado(resp.status, Swal, setOpen);
+					toogleLoading(false);
+				});
+		}
 	});
 
 	const editContygue = () => {
@@ -202,20 +204,17 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 	};
 
 	//ELIMINAR
-	// const deleteRegistro = () => {
-	// 	toogleLoading(true);
-	// 	datatable.getEliminarItem(Tabla, idregistro).then(() => {
-	// 		setOpen(false);
-	// 		toogleLoading(false);
-	// 	});
-	// };
-
-	// const editSucursal = (id = 0) => {
-	// 	console.log(id, "open sucursal");
-	// 	setidsucursal(id);
-	// 	// console.log(setopensucursal);
-	// 	setopensucursal(true);
-	// };
+	const confirmarBorado = () => {
+		alertaconfirmarBorado(Swal, deleteRegistro);
+	};
+	const deleteRegistro = () => {
+		console.log("borrando....");
+		toogleLoading(true);
+		datatable.getEliminarItem(Tabla, idregistro).then(() => {
+			setOpen(false);
+			toogleLoading(false);
+		});
+	};
 
 	const crearAsistente = (idregistro) => {
 		const dataAsistemte = {
@@ -224,7 +223,7 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 		};
 		console.log(idregistro, dataAsistemte);
 		toogleLoading(true);
-		datatable.getCrearItem(Tabla, dataAsistemte).then(({ resp }) => {
+		datatable.getCrearItem(Tabla, dataAsistemte).then(() => {
 			// alertaGuardado(resp.status, Swal, setOpen);
 			setcambioAsistente(cambioAsistente + 1);
 			toogleLoading(false);
@@ -424,6 +423,16 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 										</label>
 										<select
 											{...register1("cod_dep_per")}
+											onChange={(e) => {
+												// console.log(e.target.value);
+												let data = ciudadesData.filter(
+													(ciudad) =>
+														ciudad.cod_dep_mun ==
+														e.target.value
+												);
+												// console.log(data);
+												setciudadesDataselecciona(data);
+											}}
 											className='SELECT valid'
 											aria-invalid='false'>
 											<option value={0}>
@@ -453,15 +462,17 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 											<option value={0}>
 												Seleccione..
 											</option>
-											{ciudadesData.map((item, index) => {
-												return (
-													<option
-														key={index}
-														value={item?.id}>
-														{item?.nom_mun}
-													</option>
-												);
-											})}
+											{ciudadesDataselecciona.map(
+												(item, index) => {
+													return (
+														<option
+															key={index}
+															value={item?.id}>
+															{item?.nom_mun}
+														</option>
+													);
+												}
+											)}
 										</select>
 									</p>
 									<p>
@@ -705,11 +716,11 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 																					.checked
 																			)
 																		);
-																		console.log(
-																			getValues(
-																				"eventos"
-																			)
-																		);
+																		// console.log(
+																		// 	getValues(
+																		// 		"eventos"
+																		// 	)
+																		// );
 																	}}
 																	name={`eventos.${index}.pro_devp`}
 																	defaultChecked={parseInt(
@@ -760,108 +771,6 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 
 									<ul id='contEmpre' className='hiddenB'>
 										<li></li>
-										{/* <li className='contRemove'>
-											<p>
-												<label>Empresa</label>
-												<select
-													{...register1("sector")}
-													className='SELECT valid'
-													aria-invalid='false'>
-													<option value={0}>
-														Seleccione..
-													</option>
-													{empresasData.map(
-														(item, index) => {
-															return (
-																<option
-																	key={index}
-																	value={
-																		item?.id
-																	}>
-																	{
-																		item?.nom_emp
-																	}
-																</option>
-															);
-														}
-													)}
-												</select>
-											</p>
-											<p>
-												<label>Sucursal</label>
-												<select
-													id='sucur'
-													name='sucur'
-													disabled=''>
-													<option>
-														Seleccione...
-													</option>
-												</select>
-											</p>
-											<p>
-												<label>
-													<input
-														type='checkbox'
-														id='prin-emp'
-														name='prin-emp'
-														className='checkDireccion'
-													/>{" "}
-													Empresa principal
-												</label>
-											</p>
-											<p>
-												<label>
-													Departamento o sección
-												</label>
-												<input
-													type='text'
-													placeholder='|'
-													id='dep-emp'
-													name='dep-emp'
-												/>
-											</p>
-											<p>
-												<label>Cargo</label>
-												<input
-													type='text'
-													placeholder='|'
-													id='car-emp'
-													name='car-emp'
-												/>
-											</p>
-											<p>
-												<label>
-													Correo electrónico
-													corporativo
-												</label>
-												<input
-													type='text'
-													placeholder='|'
-													id='mail-emp'
-													name='mail-emp'
-												/>
-											</p>
-											<p>
-												<label>Teléfono oficina</label>
-												<input
-													type='text'
-													placeholder='|'
-													id='tel-emp'
-													name='tel-emp'
-												/>
-											</p>
-											<p>
-												<label>Direccion</label>
-												<input
-													type='text'
-													placeholder='|'
-													id='dir-emp'
-													name='dir-emp'
-												/>
-											</p>
-											<span className='btnMas'>+</span>
-										</li> */}
-
 										{fieldsempresa.map((item, index) => {
 											return (
 												<li
@@ -874,6 +783,19 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 															{...register1(
 																`empresas.${index}.cod_emp`
 															)}
+															onChange={(e) => {
+																// console.log(e.target.value);
+																let data = sucursalesData.filter(
+																	(ciudad) =>
+																		ciudad.cod_pad_emp ==
+																		e.target
+																			.value
+																);
+																// console.log(data);
+																setsucursalesFiltrado(
+																	data
+																);
+															}}
 															className='SELECT valid'
 															aria-invalid='false'>
 															<option value={0}>
@@ -911,7 +833,7 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 															<option value={0}>
 																Seleccione...
 															</option>
-															{sucursalesData.map(
+															{sucursalesFiltrado.map(
 																(
 																	item,
 																	index
@@ -938,10 +860,37 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 															<input
 																type='checkbox'
 																{...register1(
+																	`empresas.${index}.pri_dpe1`
+																)}
+																onChange={(
+																	e
+																) => {
+																	setValue1(
+																		`empresas.${index}.pri_dpe`,
+																		Number(
+																			e
+																				.target
+																				.checked
+																		)
+																	);
+																}}
+																className='checkDireccion'
+																name={`empresas.${index}.pri_dpe`}
+																defaultChecked={parseInt(
+																	item.pri_dpe,
+																	2
+																)}
+															/>
+															<input
+																style={{
+																	marginLeft:
+																		"15px",
+																}}
+																{...register1(
 																	`empresas.${index}.pri_dpe`
 																)}
-																className='checkDireccion'
-																defaultValue=''
+																type='hidden'
+																name={`empresas.${index}.pri_dpe`}
 															/>
 															Empresa principal
 														</label>
@@ -1023,7 +972,6 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 												appendempresa({
 													car_dpe: "",
 													cod_emp: 0,
-													cod_eve_devp: 0,
 													cod_suc: 0,
 													dep_dep: "",
 													dir_dpe: "",
@@ -1066,11 +1014,7 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 										/>
 									</p>
 								</div>
-								<input
-									id='arreglo_segmento_caja'
-									name='arreglo_segmento_caja'
-									type='hidden'
-								/>
+
 								<div className='contBtns'>
 									<input
 										type='submit'
@@ -1078,11 +1022,21 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 										value='Guardar'
 										onClick={onSubmitpost}
 									/>
+									{idregistro > 0 && (
+										<>
+											<input
+												type='button'
+												defaultValue='Eliminar contacto'
+												className='btnDark  deleteReg'
+												onClick={confirmarBorado}
+											/>
+										</>
+									)}
 								</div>
 							</form>
 						</div>
 
-						<DevTool control={control} />
+						{/* <DevTool control={control} /> */}
 					</div>
 				</div>
 

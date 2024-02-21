@@ -30,7 +30,7 @@ const [segmentosData, setsegmentosData] = useState([]);
 
 	//BUSCADOR
 	const onSubmitBuscador = handleSubmit((data) => {
-    console.log(data);
+    // console.log(data);
 
 		toogleLoading(true);
 		const queryString = Object.keys(data)

@@ -3,20 +3,24 @@ import { useForm } from "react-hook-form";
 import { Modal } from "react-responsive-modal";
 import "react-responsive-modal/styles.css";
 import Swal from "sweetalert2";
-import { alertaGuardado, alertaconfirmarBorado } from "../service/alertas";
-import { Conexion } from "../service/Conexion";
-import { useAppStore } from "../stores/app.store";
+import { alertaGuardado, alertaconfirmarBorado } from "../../service/alertas";
+import { Conexion } from "../../service/Conexion";
+import { useAppStore } from "../../stores/app.store";
 
-export const Asistente = ({ idregistro, open, setOpen, Tabla, codigoPadre }) => {
+export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 	const defaultValues = {
 		id: "0",
-		nom_per: "",
-		ape_per: "",
-		mai_per: "",
-		tof_per: "",
-		obs_per: "",
-		coy_per: codigoPadre,
-		asis_per: 1,
+		nom_emp: "",
+		dir_emp: "",
+		mai_emp: "",
+		cod_dep_emp: "",
+		cod_ciu_emp: "",
+		tel_emp: "",
+		web_emp: "",
+		cod_sec_emp: "",
+		obs_emp: "",
+		cod_pad_emp: "",
+		sucursales: [],
 	};
 	const datatable = new Conexion();
 
@@ -27,12 +31,10 @@ export const Asistente = ({ idregistro, open, setOpen, Tabla, codigoPadre }) => 
 		handleSubmit: handleSubmit1,
 		reset: reset1,
 		getValues,
+		setValue: setValue1,
 	} = useForm({ defaultValues });
 
 	const toogleLoading = useAppStore((state) => state.toogleLoading);
-	// const [departamentoData, setdepartamentoData] = useState([]);
-
-	const [opensucursal, setopensucursal] = useState(false);
 
 	const confirmarBorado = () => {
 		alertaconfirmarBorado(Swal, deleteRegistro);
@@ -42,6 +44,16 @@ export const Asistente = ({ idregistro, open, setOpen, Tabla, codigoPadre }) => 
 		setOpen(false);
 	};
 
+	//PARAMETROS
+	useEffect(() => {
+		// datatable
+		// 	.gettable("parametros/ciudades")
+		// 	.then((data) => setciudadesData(data));
+		// datatable
+		// 	.gettable("parametros/departamentos")
+		// 	.then((data) => setdepartamentoData(data));
+	}, []);
+
 	//CARGA INICIAL
 	useEffect(() => {
 		if (idregistro > 0) {
@@ -49,6 +61,7 @@ export const Asistente = ({ idregistro, open, setOpen, Tabla, codigoPadre }) => 
 			datatable.getItem(Tabla, idregistro).then(({ data }) => {
 				// console.log(data);
 				reset1(data);
+				// console.log(getValues("sucursales").length);
 				toogleLoading(false);
 			});
 		} else {
@@ -58,7 +71,6 @@ export const Asistente = ({ idregistro, open, setOpen, Tabla, codigoPadre }) => 
 
 	//CREAR Y EDITAR
 	const onSubmitpost = handleSubmit1((data) => {
-		
 		toogleLoading(true);
 
 		if (idregistro == 0) {
@@ -71,7 +83,6 @@ export const Asistente = ({ idregistro, open, setOpen, Tabla, codigoPadre }) => 
 			datatable
 				.getEditarItem(Tabla, data, idregistro)
 				.then(({ resp }) => {
-					// console.log(resp);
 					alertaGuardado(resp.status, Swal, setOpen);
 					toogleLoading(false);
 				});
@@ -79,8 +90,6 @@ export const Asistente = ({ idregistro, open, setOpen, Tabla, codigoPadre }) => 
 	});
 
 	//ELIMINAR
-
-
 	const deleteRegistro = () => {
 		toogleLoading(true);
 		datatable.getEliminarItem(Tabla, idregistro).then(() => {
@@ -108,66 +117,66 @@ export const Asistente = ({ idregistro, open, setOpen, Tabla, codigoPadre }) => 
 						Close
 					</span>
 					<div className='gForm triB'>
-						{/* <pre>{JSON.stringify(getValues(), null, 2)}</pre> */}
-						<h2>Formulario Asistente </h2>
+						{/* <pre>{JSON.stringify(idregistro, null, 2)}</pre> */}
+						<h2>Formulario eventos </h2>
 						<div>
 							<form onSubmit={onSubmitpost}>
 								<div className='col2'>
 									<p>
-										<label htmlFor='nom_per'>Nombre</label>
+										<label htmlFor='nom'>Nombre</label>
 										<input
 											type='text'
-											{...register1("nom_per", {
-												required: true,
-											})}
-										/>
-										<input
-											type='hidden'
-											{...register1("asis_per", {
+											{...register1("nom_eve", {
 												required: true,
 											})}
 										/>
 									</p>
 									<p>
-										<label htmlFor='tof_per'>
-											Teléfono de contacto
+										<br />
+										<label className='gCheck'>
+											Marca de protocolo
+											<input
+												{...register1(
+													`pro_eve1`
+												)}
+												type='checkbox'
+												onChange={(e) => {
+													setValue1(
+														`pro_eve`,
+														Number(e.target.checked)
+													);
+												}}
+
+												defaultChecked={parseInt(
+													getValues("pro_eve"),
+													2
+												)}
+											/>
+											<input
+												style={{
+													marginLeft: "15px",
+												}}
+												{...register1(
+													`pro_eve`
+												)}
+												type='text'
+												name={`pro_eve`}
+											/>
 										</label>
-										<input
-											type='text'
-											{...register1("tof_per")}
-										/>
 									</p>
 								</div>
 
-								<div className='col2'>
-									<p>
-										<label htmlFor='ape_per'>
-											Apellidos
-										</label>
-
-										<input
-											type='text'
-											{...register1("ape_per")}
-										/>
-									</p>
-									<p>
-										<label htmlFor='mai_per'>E-mail</label>
-
-										<input
-											type='text'
-											{...register1("mai_per")}
-										/>
-									</p>
-								</div>
 								<p>
-									<label htmlFor='obs_per'>
-										Observaciones
-									</label>
+									<label htmlFor='obs'>Observaciones</label>
 									<textarea
 										maxLength={128}
 										className='maxLength'
-										{...register1("obs_per")}
+										{...register1("com_eve")}
 									/>
+									<span className='numCarac'>
+										<strong>0</strong> caracteres de
+										<strong>128</strong>
+									</span>
 								</p>
 
 								<div className='contBtns'>
@@ -178,8 +187,17 @@ export const Asistente = ({ idregistro, open, setOpen, Tabla, codigoPadre }) => 
 										value='Guardar'
 										onClick={onSubmitpost}
 									/>
-									
-									
+
+									{idregistro > 0 && (
+										<>
+											<input
+												type='button'
+												defaultValue='Eliminar  evento'
+												className='btnDark  deleteReg'
+												onClick={confirmarBorado}
+											/>
+										</>
+									)}
 								</div>
 							</form>
 						</div>
