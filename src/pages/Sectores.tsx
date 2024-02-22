@@ -1,103 +1,85 @@
+import { useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { useAppStore } from "../stores/app.store";
+import { Conexion } from "../service/Conexion";
+import { Formulario } from "../componentes/sectores/Formulario";
+import { Buscador } from "../componentes/sectores/Buscador";
+import { Resultados } from "../componentes/sectores/Resultados";
 
 export const Sectores = () => {
-  return (
-    <>
-    <section className="gContent">
-  {/*Titulo seccion*/}
-  <div className="gTitle">
-    <h2>Panel de control sector</h2>
-    <div className="contBtns">
-      <a
-        href="crear_sector.php?ini=10000"
-        className="btnDark fancyForm cboxElement"
-      >
-        Crear sector
-      </a>
-    </div>
-  </div>
-  {/*Fin Titulo seccion*/}
-  {/*Formulario seccion*/}
-  <div className="gForm triB">
-    <h2>Buscar</h2>
-    <div>
-      <form id="formBusqSector" method="post" >
-        <p>
-          <label>Seleccione el sector</label>
-          <select
-            name="sect"
-            id="sect"
-            className="SELECT valid"
-            aria-required="true"
-            aria-invalid="false"
-          >
-            <option value={0} >
-              Seleccione..
-            </option>{" "}
-            <option value={3}>EDUCACION</option>{" "}
-            <option value={5}>FAMILIA CORTES</option>{" "}
-            <option value={26}>FUNDACION BOLIVAR DAVIVIENDA</option>{" "}
-            <option value={27}>GANADORES PREMIO</option>{" "}
-            <option value={12}>GRUPO BOLIVAR</option>{" "}
-            <option value={21}>INACTIVO</option>{" "}
-            <option value={25}>JURADO PREMIO</option>{" "}
-            <option value={13}>MEDIOS DE COMUNICACION</option>{" "}
-            <option value={24}>OTROS</option>
-          </select>
-        </p>
-        <div className="contBtns">
-          <input
-            type="button"
-            id="resetBusq"
-            defaultValue="Anular Búsqueda"
-            className="btnDark"
-          />
-          <input type="submit" defaultValue="Buscar" className="btnDark" />
-          <input
-            type="hidden"
-            name="ti"
-            id="ti"
-            defaultValue="cHJvdG9jb2xvdGlwbz01MnByb3RvY29sbw=="
-          />
-        </div>
-      </form>
-    </div>
-  </div>
-  {/*Fin Formulario seccion*/}
-  {/*Resultados*/}
-  <div id="divResult" className="contResults">
-    <table>
-      <thead>
-        <tr>
-          <th>
-            <a href="#" className="orderAsc">
-              Sector
-            </a>
-          </th>
-          <th>
-            <a href="#" className="orderDes">
-              Total participantes
-            </a>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>
-            <a
-              href="crear_sector.php?edi=cHJvdG9jb2xvY29uc0VkPTI2cHJvdG9jb2xv"
-              className="fancyForm cboxElement"
-            >
-              FUNDACION BOLIVAR DAVIVIENDA
-            </a>
-          </td>
-          <td>58</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  {/*Fin Resultados*/}
-</section>
+	const datatable = new Conexion();
+	const Tabla = "sector";
+	const toogleLoading = useAppStore((state) => state.toogleLoading);
+	const [dataResultado, setdataResultado] = useState([]);
+	const [open, setOpen] = useState(false);
+	const { register, handleSubmit, reset } = useForm();
+	const [idregistro, setidregistro] = useState(0);
+	const [eventosData, seteventosData] = useState([]);
 
-    </>
-  )
-}
+	const editProduct = (id = 0) => {
+		// console.log(id);
+		setidregistro(id);
+		setOpen(true);
+	};
+
+	/**Efecto solo para paremetros del formulario */
+	useEffect(() => {
+		datatable
+			.gettable("parametros/sector")
+			.then((data) => seteventosData(data));
+	}, []);
+
+	//BUSCADOR
+	const onSubmitBuscador = handleSubmit((data) => {
+		toogleLoading(true);
+    console.log(data);
+		const queryString = Object.keys(data)
+			.map((key) => {
+				return (
+					encodeURIComponent(key) +
+					"=" +
+					encodeURIComponent(data[key].trim())
+				);
+			})
+			.join("&");
+		const rutaApi = Tabla + "?" + queryString;
+		datatable.gettable(rutaApi).then((res) => {
+			setdataResultado(res);
+			toogleLoading(false);
+		});
+	});
+
+	return (
+		<>
+			<Formulario
+				idregistro={idregistro}
+				open={open}
+				setOpen={setOpen}
+				Tabla={Tabla}
+			/>
+			<section className='gContent'>
+				<div className='gTitle'>
+					<h2>Panel de control sector</h2>
+					<div className='contBtns'>
+						<a
+							onClick={() => editProduct(0)}
+							href='#'
+							className='btnDark fancyForm cboxElement'>
+							Crear sector
+						</a>
+					</div>
+				</div>
+				<Buscador
+					onSubmitBuscador={onSubmitBuscador}
+					register={register}
+					eventosData={eventosData}
+					reset={reset}
+				/>
+				<Resultados
+					dataResultado={dataResultado}
+					editProduct={editProduct}
+				/>
+			</section>
+		</>
+	);
+};

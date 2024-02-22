@@ -65,7 +65,7 @@ export const Eventos = () => {
 							onClick={() => editProduct(0)}
 							href='#'
 							className='btnDark fancyForm cboxElement'>
-							Crear empresa
+							Crear evento
 						</a>
 					</div>
 				</div>

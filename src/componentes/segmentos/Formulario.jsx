@@ -118,7 +118,7 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 					</span>
 					<div className='gForm triB'>
 						{/* <pre>{JSON.stringify(idregistro, null, 2)}</pre> */}
-						<h2>Formulario eventos </h2>
+						<h2>Formulario segmentos </h2>
 						<div>
 							<form onSubmit={onSubmitpost}>
 								<div className='col2'>
@@ -126,58 +126,15 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 										<label htmlFor='nom'>Nombre</label>
 										<input
 											type='text'
-											{...register1("nom_eve", {
+											{...register1("nom_seg", {
 												required: true,
 											})}
 										/>
 									</p>
-									<p>
-										<br />
-										<label className='gCheck'>
-											Marca de protocolo
-											<input
-												{...register1(
-													`pro_eve1`
-												)}
-												type='checkbox'
-												onChange={(e) => {
-													setValue1(
-														`pro_eve`,
-														Number(e.target.checked)
-													);
-												}}
-
-												defaultChecked={parseInt(
-													getValues("pro_eve"),
-													2
-												)}
-											/>
-											<input
-												style={{
-													marginLeft: "15px",
-												}}
-												{...register1(
-													`pro_eve`
-												)}
-												type='hidden'
-												name={`pro_eve`}
-											/>
-										</label>
-									</p>
+									
 								</div>
 
-								<p>
-									<label htmlFor='obs'>Observaciones</label>
-									<textarea
-										maxLength={128}
-										className='maxLength'
-										{...register1("com_eve")}
-									/>
-									<span className='numCarac'>
-										<strong>0</strong> caracteres de
-										<strong>128</strong>
-									</span>
-								</p>
+								
 
 								<div className='contBtns'>
 									<input
@@ -192,7 +149,7 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 										<>
 											<input
 												type='button'
-												defaultValue='Eliminar  evento'
+												defaultValue='Eliminar  segmento'
 												className='btnDark  deleteReg'
 												onClick={confirmarBorado}
 											/>

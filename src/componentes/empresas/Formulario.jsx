@@ -39,6 +39,7 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 
 	const [opensucursal, setopensucursal] = useState(false);
 	const [idsucursal, setidsucursal] = useState(0);
+	const [ciudadesDataselecciona, setciudadesDataselecciona] = useState([]);
 
 	const confirmarBorado = () => {
 		alertaconfirmarBorado(Swal, deleteRegistro);
@@ -151,6 +152,16 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 										</label>
 										<select
 											{...register1("cod_dep_emp")}
+											onChange={(e) => {
+												// console.log(e.target.value);
+												let data = ciudadesData.filter(
+													(ciudad) =>
+														ciudad.cod_dep_mun ==
+														e.target.value
+												);
+												// console.log(data);
+												setciudadesDataselecciona(data);
+											}}
 											className='SELECT '
 											aria-invalid='false'>
 											<option value={0}>
@@ -180,15 +191,17 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 											<option value={0}>
 												Seleccione..
 											</option>
-											{ciudadesData.map((item, index) => {
-												return (
-													<option
-														key={index}
-														value={item?.id}>
-														{item?.nom_mun}
-													</option>
-												);
-											})}
+											{ciudadesDataselecciona.map(
+												(item, index) => {
+													return (
+														<option
+															key={index}
+															value={item?.id}>
+															{item?.nom_mun}
+														</option>
+													);
+												}
+											)}
 										</select>
 									</p>
 								</div>

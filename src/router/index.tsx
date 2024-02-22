@@ -54,7 +54,7 @@ export const RenderRoutes = () => {
 					}
 				/>
 				<Route
-					path='sevtores'
+					path='sectores'
 					element={
 						<React.Suspense fallback={<>...</>}>
 							<Sectores />

@@ -98,7 +98,7 @@ export const Header = () => {
 									</li>
 									<li>
 										<NavLink
-											to={`/sevtores`}
+											to={`/sectores`}
 											className={({
 												isActive,
 												isPending,
