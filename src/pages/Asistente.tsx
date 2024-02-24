@@ -15,8 +15,10 @@ export const Asistente = ({ idregistro, open, setOpen, Tabla, codigoPadre }) => 
 		mai_per: "",
 		tof_per: "",
 		obs_per: "",
+		reg_per: 0,
 		coy_per: codigoPadre,
 		asis_per: 1,
+		dir_corr_per: "",
 	};
 	const datatable = new Conexion();
 
@@ -32,7 +34,9 @@ export const Asistente = ({ idregistro, open, setOpen, Tabla, codigoPadre }) => 
 	const toogleLoading = useAppStore((state) => state.toogleLoading);
 	// const [departamentoData, setdepartamentoData] = useState([]);
 
-	const [opensucursal, setopensucursal] = useState(false);
+	// const [opensucursal, setopensucursal] = useState(false);
+	const [regaloData, setregaloData] = useState([]);
+	const [listadirecciones, setlistadirecciones] = useState([]);
 
 	const confirmarBorado = () => {
 		alertaconfirmarBorado(Swal, deleteRegistro);
@@ -54,7 +58,20 @@ export const Asistente = ({ idregistro, open, setOpen, Tabla, codigoPadre }) => 
 		} else {
 			reset1(defaultValues);
 		}
-	}, [idregistro, open]);
+	}, [idregistro]);
+
+
+		//PARAMETROS
+	useEffect(() => {
+		console.log({ codigoPadre });
+		datatable
+			.gettable("parametros/parametros/si_no")
+			.then((data) => setregaloData(data));
+		datatable
+			.gettable("asistentesdireccion/"+codigoPadre)
+			.then((data) => setlistadirecciones(data));
+				
+	}, [open]);
 
 	//CREAR Y EDITAR
 	const onSubmitpost = handleSubmit1((data) => {
@@ -129,18 +146,6 @@ export const Asistente = ({ idregistro, open, setOpen, Tabla, codigoPadre }) => 
 										/>
 									</p>
 									<p>
-										<label htmlFor='tof_per'>
-											Teléfono de contacto
-										</label>
-										<input
-											type='text'
-											{...register1("tof_per")}
-										/>
-									</p>
-								</div>
-
-								<div className='col2'>
-									<p>
 										<label htmlFor='ape_per'>
 											Apellidos
 										</label>
@@ -148,6 +153,19 @@ export const Asistente = ({ idregistro, open, setOpen, Tabla, codigoPadre }) => 
 										<input
 											type='text'
 											{...register1("ape_per")}
+										/>
+									</p>
+									
+								</div>
+
+								<div className='col2'>
+									<p>
+										<label htmlFor='tof_per'>
+											Teléfono de contacto
+										</label>
+										<input
+											type='text'
+											{...register1("tof_per")}
 										/>
 									</p>
 									<p>
@@ -159,6 +177,65 @@ export const Asistente = ({ idregistro, open, setOpen, Tabla, codigoPadre }) => 
 										/>
 									</p>
 								</div>
+
+
+								<div className='col2'>
+									<p>
+										<label htmlFor='tof_per'>
+											Regalo:
+										</label>
+										<select
+											{...register1("reg_per")}
+											className='SELECT valid'
+											aria-invalid='false'>
+											<option value={0}>
+												Seleccione..
+											</option>
+											{regaloData.map(
+												(item, index) => {
+													return (
+														<option
+															key={index}
+															value={item?.id}>
+															{item?.name}
+														</option>
+													);
+												}
+											)}
+										</select>
+									</p>
+									<p>
+										<label htmlFor='mai_per'>Direccion:</label>
+										<select
+											{...register1("dir_corr_per")}
+											className='SELECT valid'
+											aria-invalid='false'>
+											<option value={0}>
+												Seleccione..
+											</option>
+											{listadirecciones.map(
+												(item, index) => {
+													return (
+														<option
+															key={index}
+															value={item?.direccion}>
+															{item?.lugar}
+														</option>
+													);
+												}
+											)}
+										</select>
+
+										{/* <input
+											type='text'
+											{...register1("mai_per")}
+										/> */}
+									</p>
+								</div>
+
+								setlistadirecciones
+
+
 								<p>
 									<label htmlFor='obs_per'>
 										Observaciones

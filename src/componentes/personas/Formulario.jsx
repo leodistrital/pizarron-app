@@ -164,10 +164,19 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 		if (idregistro > 0) {
 			toogleLoading(true);
 			datatable.getItem(Tabla, idregistro).then(({ data }) => {
-				// console.log(data);
+				console.log(data);
 				reset1(data);
 				// console.log(getValues("sucursales").length);
 				toogleLoading(false);
+
+				/** funciones para edicion */
+				// console.log(data.cod_dep_per);
+		
+				setciudadesDataselecciona(
+					ciudadesData.filter(
+						(ciudad) => ciudad.cod_dep_mun == data?.cod_dep_per
+					)
+				);
 			});
 		} else {
 			reset1(defaultValues);
@@ -542,8 +551,8 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 															className='btnExtra abrir_fan_asis'>
 															Información
 															Asistente
-														</a>{" "}
-														{item?.nom_per}{" "}
+														</a>
+														{item?.nom_per}
 														{item?.ape_per}
 														<span
 															className='remove'
@@ -552,8 +561,7 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 																	item?.id
 																);
 															}}>
-															{" "}
-															x{" "}
+															x
 														</span>
 													</p>
 												);
@@ -768,6 +776,7 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 										</a>
 									</p>
 									<p>&nbsp;</p>
+								
 
 									<ul id='contEmpre' className='hiddenB'>
 										<li></li>

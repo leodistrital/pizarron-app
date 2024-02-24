@@ -1,15 +1,15 @@
-import axios from 'axios';
-import { useAppStore } from '../stores/app.store';
+import axios from "axios";
+import { useAppStore } from "../stores/app.store";
 
-const URL = 'http://localhost' + "/api/";
-const URLlogin ='localhost' + "/login";
+const URL = "http://localhost" + "/api/";
+const URLlogin = "localhost" + "/login";
 
 export class Conexion {
 	header = {};
-    session = useAppStore((state) => state.login);
+	session = useAppStore((state) => state.login);
 
 	constructor() {
-		const { xtoken } =  this.session;
+		const { xtoken } = this.session;
 		this.header = {
 			Authorization: xtoken,
 		};
@@ -25,7 +25,7 @@ export class Conexion {
 				return res.data;
 			})
 			.catch(function (err) {
-                console.log({err});
+				console.log({ err });
 				return 0;
 			});
 	}
@@ -51,7 +51,7 @@ export class Conexion {
 			.put(URL + tabla + "/" + id, { ...data }, { headers: this.header })
 			.then((res) => res.data);
 	}
-	getEliminarItem(tabla,  id) {
+	getEliminarItem(tabla, id) {
 		return axios
 			.delete(URL + tabla + "/" + id, { headers: this.header })
 			.then((res) => res.data);
