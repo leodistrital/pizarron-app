@@ -1,20 +1,40 @@
 import { useForm } from "react-hook-form";
 import { Footer } from "../componentes/global/footer";
 import { useAppStore } from "../stores/app.store";
+import { Conexion } from "../service/Conexion";
+import Swal from "sweetalert2";
+import { liginError } from "../service/alertas";
 
 export const Login = () => {
-    const toogleLoading = useAppStore((state) => state.toogleLoading);
-    const estado = useAppStore((state) => state);
+	const datatable = new Conexion();
+	const toogleLoading = useAppStore((state) => state.toogleLoading);
+	const login = useAppStore((state) => state.iniciar);
+	const estado = useAppStore((state) => state);
 
-	const { register, handleSubmit , formState: { errors , isDirty , isValid}
-     } = useForm();
+	const {
+		register,
+		handleSubmit,
+		formState: { errors, isDirty, isValid },
+	} = useForm();
 
 	const onSubmit = handleSubmit((data) => {
-       console.log(estado);
+		//    console.log(data);
+		toogleLoading(true);
+		datatable.getlogin("", data).then((resp) => {
+			// console.log(resp);
+			if (resp == 0) {
+				console.log("no puede seguir");
+				liginError(Swal);
+			} else {
+				console.log("puede seguir");
+				login(resp.usuario, resp.token, resp.perfil);
+			}
+			toogleLoading(false);
+		});
 		// console.log("enviado");
 		// console.log({ data });
-        toogleLoading(true);
-         console.log(estado);
+		// toogleLoading(true);
+		console.log(estado);
 	});
 	return (
 		<>
@@ -31,8 +51,8 @@ export const Login = () => {
 										placeholder='|'
 										id='username'
 										{...register("username", {
-                                            required: true,
-                                        })}
+											required: true,
+										})}
 									/>
 								</p>
 								<p>
@@ -41,9 +61,9 @@ export const Login = () => {
 										type='password'
 										placeholder='|'
 										id='password'
-										{...register("password" , {
-                                            required: true,
-                                        })}
+										{...register("password", {
+											required: true,
+										})}
 									/>
 								</p>
 
@@ -59,7 +79,7 @@ export const Login = () => {
 					</div>
 				</div>
 			</div>
-            <Footer />
+			<Footer />
 		</>
 	);
 };

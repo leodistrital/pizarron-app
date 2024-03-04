@@ -164,7 +164,7 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 		if (idregistro > 0) {
 			toogleLoading(true);
 			datatable.getItem(Tabla, idregistro).then(({ data }) => {
-				console.log(data);
+				// console.log(data);
 				reset1(data);
 				// console.log(getValues("sucursales").length);
 				toogleLoading(false);

@@ -7,7 +7,13 @@ import { alertaGuardado, alertaconfirmarBorado } from "../service/alertas";
 import { Conexion } from "../service/Conexion";
 import { useAppStore } from "../stores/app.store";
 
-export const Asistente = ({ idregistro, open, setOpen, Tabla, codigoPadre }) => {
+export const Asistente = ({
+	idregistro,
+	open,
+	setOpen,
+	Tabla,
+	codigoPadre,
+}) => {
 	const defaultValues = {
 		id: "0",
 		nom_per: "",
@@ -60,22 +66,20 @@ export const Asistente = ({ idregistro, open, setOpen, Tabla, codigoPadre }) => 
 		}
 	}, [idregistro]);
 
-
-		//PARAMETROS
+	//PARAMETROS
 	useEffect(() => {
 		console.log({ codigoPadre });
 		datatable
 			.gettable("parametros/parametros/si_no")
 			.then((data) => setregaloData(data));
 		datatable
-			.gettable("asistentesdireccion/"+codigoPadre)
+			.gettable("asistentesdireccion/" + codigoPadre)
 			.then((data) => setlistadirecciones(data));
-				
 	}, [open]);
 
 	//CREAR Y EDITAR
 	const onSubmitpost = handleSubmit1((data) => {
-		
+		// console.log(data);
 		toogleLoading(true);
 
 		if (idregistro == 0) {
@@ -96,7 +100,6 @@ export const Asistente = ({ idregistro, open, setOpen, Tabla, codigoPadre }) => 
 	});
 
 	//ELIMINAR
-
 
 	const deleteRegistro = () => {
 		toogleLoading(true);
@@ -155,9 +158,7 @@ export const Asistente = ({ idregistro, open, setOpen, Tabla, codigoPadre }) => 
 											{...register1("ape_per")}
 										/>
 									</p>
-									
 								</div>
-
 								<div className='col2'>
 									<p>
 										<label htmlFor='tof_per'>
@@ -177,13 +178,9 @@ export const Asistente = ({ idregistro, open, setOpen, Tabla, codigoPadre }) => 
 										/>
 									</p>
 								</div>
-
-
 								<div className='col2'>
 									<p>
-										<label htmlFor='tof_per'>
-											Regalo:
-										</label>
+										<label htmlFor='tof_per'>Regalo:</label>
 										<select
 											{...register1("reg_per")}
 											className='SELECT valid'
@@ -191,21 +188,21 @@ export const Asistente = ({ idregistro, open, setOpen, Tabla, codigoPadre }) => 
 											<option value={0}>
 												Seleccione..
 											</option>
-											{regaloData.map(
-												(item, index) => {
-													return (
-														<option
-															key={index}
-															value={item?.id}>
-															{item?.name}
-														</option>
-													);
-												}
-											)}
+											{regaloData.map((item, index) => {
+												return (
+													<option
+														key={index}
+														value={item?.id}>
+														{item?.name}
+													</option>
+												);
+											})}
 										</select>
 									</p>
 									<p>
-										<label htmlFor='mai_per'>Direccion:</label>
+										<label htmlFor='mai_per'>
+											Direccion:
+										</label>
 										<select
 											{...register1("dir_corr_per")}
 											className='SELECT valid'
@@ -218,7 +215,9 @@ export const Asistente = ({ idregistro, open, setOpen, Tabla, codigoPadre }) => 
 													return (
 														<option
 															key={index}
-															value={item?.direccion}>
+															value={
+																item?.direccion
+															}>
 															{item?.lugar}
 														</option>
 													);
@@ -232,10 +231,7 @@ export const Asistente = ({ idregistro, open, setOpen, Tabla, codigoPadre }) => 
 										/> */}
 									</p>
 								</div>
-
 								setlistadirecciones
-
-
 								<p>
 									<label htmlFor='obs_per'>
 										Observaciones
@@ -246,7 +242,6 @@ export const Asistente = ({ idregistro, open, setOpen, Tabla, codigoPadre }) => 
 										{...register1("obs_per")}
 									/>
 								</p>
-
 								<div className='contBtns'>
 									<input
 										type='button'
@@ -255,8 +250,6 @@ export const Asistente = ({ idregistro, open, setOpen, Tabla, codigoPadre }) => 
 										value='Guardar'
 										onClick={onSubmitpost}
 									/>
-									
-									
 								</div>
 							</form>
 						</div>

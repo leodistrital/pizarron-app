@@ -284,7 +284,7 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 										</li> */}
 									</ul>
 								</div>
-
+{/* 
 								<div className='dateModi'>
 									<p>
 										<strong>Fecha de creación</strong>
@@ -294,7 +294,7 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 									<p>
 										<strong>Última modificación</strong>
 									</p>
-								</div>
+								</div> */}
 								<div className='contBtns'>
 									<input
 										type='button'
