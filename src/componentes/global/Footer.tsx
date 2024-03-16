@@ -5,7 +5,7 @@ import { useAppStore } from "../../stores/app.store";
 export const Footer = () => {
 	let posicion = "none";
 	const isloading = useAppStore((state) => state.isloading);
-	const esatado = useAppStore((state) => state);
+	// const esatado = useAppStore((state) => state);
 
 	// posicion = isloading ? "block" : "none";
 	posicion= "block";
@@ -25,7 +25,7 @@ export const Footer = () => {
 				style={{ display: posicion, marginTop: "0px" }}></div>
 		</Modal>
 
-		<pre>{ JSON.stringify(esatado)  }</pre>
+		{/* <pre>{ JSON.stringify(esatado)  }</pre> */}
 		</>
 	);
 };

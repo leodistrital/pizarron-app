@@ -23,10 +23,11 @@ export const Login = () => {
 		datatable.getlogin("", data).then((resp) => {
 			// console.log(resp);
 			if (resp == 0) {
-				console.log("no puede seguir");
+				// console.log("no puede seguir");
 				liginError(Swal);
 			} else {
-				console.log("puede seguir");
+				// console.log("puede seguir");
+				console.log(resp.perfil);
 				login(resp.usuario, resp.token, resp.perfil ,  resp.usertoken);
 			}
 			toogleLoading(false);
@@ -34,7 +35,7 @@ export const Login = () => {
 		// console.log("enviado");
 		// console.log({ data });
 		// toogleLoading(true);
-		console.log(estado);
+		// console.log(estado);
 	});
 	return (
 		<>

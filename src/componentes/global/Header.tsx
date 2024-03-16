@@ -4,6 +4,7 @@ import { useAppStore } from "../../stores/app.store";
 export const Header = () => {
 	const salir = useAppStore((state) => state.logout);
 	const mail = useAppStore((state) => state.mail);
+	const perfil = useAppStore((state) => state.perfil);
 
 	const handleLogOut = () => {
 		salir();
@@ -48,7 +49,10 @@ export const Header = () => {
 								</NavLink>
 							</li>
 
-							<li>
+							{
+								perfil == 4 && (
+									<>
+									<li>
 								<NavLink
 									to={`/eventos`}
 									className={({ isActive, isPending }) =>
@@ -130,6 +134,13 @@ export const Header = () => {
 									</li>
 								</ul>
 							</li>
+
+									</>
+								)
+							}
+
+							
+
 						</ul>
 					</nav>
 					{/*Fin Menu principal*/}
@@ -137,6 +148,8 @@ export const Header = () => {
 					<nav className='userMenu'>
 						<p>
 							<strong>Bienvenido</strong> {mail}
+
+							{/* *** {perfil} */}
 						</p>
 						<NavLink to={`/cuenta`} className='btnTwo'>
 							MI CUENTA

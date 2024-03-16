@@ -37,6 +37,7 @@ export const RenderRoutes = () => {
 						</React.Suspense>
 					}
 				/>
+				
 				<Route
 					path='reportes'
 					element={

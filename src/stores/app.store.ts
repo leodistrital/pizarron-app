@@ -26,7 +26,7 @@ export const useAppStore = create<AppState>((set) => ({
 		})),
 
 	iniciar: (mail: string, token: string, perfil: number,  usertoken: string) =>
-		set(() => ({ login: true, mail: mail, token: token, usertoken: usertoken })),
+		set(() => ({ login: true, mail: mail, perfil:perfil, token: token, usertoken: usertoken })),
 
 	toogleLoading: (estado) => {
 		set(() => ({

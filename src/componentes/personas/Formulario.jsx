@@ -122,7 +122,7 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 	//PARAMETROS
 	useEffect(() => {
 		toogleLoading(true);
-		console.log({ idregistro });
+		// console.log({ idregistro });
 		datatable
 			.gettable("parametros/parametros/titulo_persona")
 			.then((data) => setTituloPersona(data));
