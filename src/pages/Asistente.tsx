@@ -231,7 +231,7 @@ export const Asistente = ({
 										/> */}
 									</p>
 								</div>
-								setlistadirecciones
+								
 								<p>
 									<label htmlFor='obs_per'>
 										Observaciones
@@ -242,6 +242,16 @@ export const Asistente = ({
 										{...register1("obs_per")}
 									/>
 								</p>
+
+								<div className='dateModi'>
+									<p>
+										<strong>Última modificación: </strong>
+										{getValues("updated_at")}
+									</p>
+									<p>
+										<strong>Usuario: </strong> {getValues("usuario")}
+									</p>
+								</div>
 								<div className='contBtns'>
 									<input
 										type='button'

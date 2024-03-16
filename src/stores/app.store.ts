@@ -7,7 +7,7 @@ interface AppState {
 	perfil: number;
 	isloading: boolean;
 	logout: () => void;
-	iniciar: (mail: string, token: string) => void;
+	iniciar: (mail: string, token: string , perfil: number,  usertoken: string) => void;
 	toogleLoading: (estado: boolean) => void;
 }
 
@@ -15,6 +15,7 @@ export const useAppStore = create<AppState>((set) => ({
 	login: false,
 	mail: "",
 	token: "",
+	usertoken: "",
 	perfil: 0,
 	isloading: false,
 	logout: () =>
@@ -24,8 +25,8 @@ export const useAppStore = create<AppState>((set) => ({
 			token: "",
 		})),
 
-	iniciar: (mail: string, token: string, perfil: number) =>
-		set(() => ({ login: true, mail: mail, token: token, perfil: perfil })),
+	iniciar: (mail: string, token: string, perfil: number,  usertoken: string) =>
+		set(() => ({ login: true, mail: mail, token: token, usertoken: usertoken })),
 
 	toogleLoading: (estado) => {
 		set(() => ({

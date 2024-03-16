@@ -121,6 +121,7 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 
 	//PARAMETROS
 	useEffect(() => {
+		toogleLoading(true);
 		console.log({ idregistro });
 		datatable
 			.gettable("parametros/parametros/titulo_persona")
@@ -140,9 +141,10 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 		datatable
 			.gettable("parametros/sector")
 			.then((data) => setsectores(data));
-		datatable
-			.gettable("parametros/segmento")
-			.then((data) => setsegmentos(data));
+		datatable.gettable("parametros/segmento").then((data) => {
+			setsegmentos(data);
+			toogleLoading(false);
+		});
 		datatable.gettable("parametros/empresas").then((data) => {
 			const empresas = data.filter((empresa) => empresa.cod_pad_emp == 0);
 			setempresasData(empresas);
@@ -171,7 +173,7 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 
 				/** funciones para edicion */
 				// console.log(data.cod_dep_per);
-		
+
 				setciudadesDataselecciona(
 					ciudadesData.filter(
 						(ciudad) => ciudad.cod_dep_mun == data?.cod_dep_per
@@ -776,7 +778,6 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 										</a>
 									</p>
 									<p>&nbsp;</p>
-								
 
 									<ul id='contEmpre' className='hiddenB'>
 										<li></li>
@@ -1021,6 +1022,16 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 											className='maxLength'
 											{...register1("hab_per")}
 										/>
+									</p>
+								</div>
+
+								<div className='dateModi'>
+									<p>
+										<strong>Última modificación: </strong>
+										{getValues("updated_at")}
+									</p>
+									<p>
+										<strong>Usuario: </strong> {getValues("usuario")}
 									</p>
 								</div>
 

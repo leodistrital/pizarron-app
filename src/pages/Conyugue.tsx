@@ -170,6 +170,17 @@ export const Conyugue = ({ idregistro, open, setOpen, Tabla, codigoPadre }) => {
 									/>
 								</p>
 
+
+								<div className='dateModi'>
+									<p>
+										<strong>Última modificación: </strong>
+										{getValues("updated_at")}
+									</p>
+									<p>
+										<strong>Usuario: </strong> {getValues("usuario")}
+									</p>
+								</div>
+
 								<div className='contBtns'>
 									<input
 										type='button'

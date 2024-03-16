@@ -3,7 +3,7 @@ import { Conexion } from "../../service/Conexion";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useAppStore } from "../../stores/app.store";
 
-import { DevTool } from "@hookform/devtools";
+// import { DevTool } from "@hookform/devtools";
 
 export const Buscador = () => {
 	const toogleLoading = useAppStore((state) => state.toogleLoading);
@@ -71,18 +71,15 @@ export const Buscador = () => {
 		// console.log(data);
 		toogleLoading(true);
 		datatable.getCrearItem("reportes", data).then(({ resp }) => {
-			// console.log(resp);
-			setdescargaexcel(resp.data);
-			toogleLoading(false);
-			// console.log(descargaexcel?.length);
+			exportExcel([...resp.data])
 		});
 	});
 
-	const exportExcel = () => {
-		// console.log(descargaexcel);
+	const exportExcel = (datos) => {
+		console.log({datos});
 		// console.log(typeof dataSet);
 		import("xlsx").then((xlsx) => {
-			const worksheet = xlsx.utils.json_to_sheet(descargaexcel);
+			const worksheet = xlsx.utils.json_to_sheet(datos);
 
 			const workbook = {
 				Sheets: { data: worksheet },
@@ -94,6 +91,7 @@ export const Buscador = () => {
 			});
 			saveAsExcelFile(excelBuffer, "informe-protocolo");
 		});
+		toogleLoading(false);
 	};
 
 	const saveAsExcelFile = (buffer, fileName) => {
@@ -114,10 +112,7 @@ export const Buscador = () => {
 
 				module.default.saveAs(
 					data,
-					fileName +
-						"-" +
-						formatoPersonalizado +
-						EXCEL_EXTENSION
+					fileName + "-" + formatoPersonalizado + EXCEL_EXTENSION
 				);
 			}
 		});
@@ -127,7 +122,7 @@ export const Buscador = () => {
 		<>
 			<div className='gForm triB'>
 				<h2>Buscar</h2>
-				<DevTool control={control} />
+				{/* <DevTool control={control} /> */}
 				<div>
 					<form onSubmit={onSubmitBuscador}>
 						<div className='col3'>
@@ -314,12 +309,12 @@ export const Buscador = () => {
 								onClick={onSubmitBuscador}
 							/>
 
-							<input
+							{/* <input
 								type='submit'
 								className='btnDark'
 								value='Descargar'
 								onClick={exportExcel}
-							/>
+							/> */}
 						</div>
 					</form>
 				</div>

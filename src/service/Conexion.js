@@ -22,6 +22,7 @@ export class Conexion {
 		this.header = {
 			Authorization: this.session.token,
 			userapp: this.session.mail,
+			usertoken: this.session.usertoken,
 		};
 		// console.log(xtoken);
 

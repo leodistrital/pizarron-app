@@ -11,6 +11,11 @@ export const Resultados = ({ dataResultado, editProduct }) => {
 										Nombre
 									</a>
 								</th>
+								<th>
+									<a href='#' className='orderAsc'>
+										Total
+									</a>
+								</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -26,6 +31,9 @@ export const Resultados = ({ dataResultado, editProduct }) => {
 												className='fancyForm cboxElement'>
 												{item?.nom_eve}
 											</a>
+										</td>
+										<td>
+											{item?.total}
 										</td>
 									</tr>
 								);
