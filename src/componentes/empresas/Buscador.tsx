@@ -1,6 +1,16 @@
 
 
-export const Buscador = ({onSubmitBuscador ,register ,ciudadesData , reset}) => {
+export const Buscador = ({
+	onSubmitBuscador,
+	register,
+	ciudadesData,
+	reset
+}: {
+	onSubmitBuscador: (event: React.FormEvent<HTMLFormElement>) => void;
+	register: any; // Replace 'any' with the appropriate type
+	ciudadesData: { id:string , nom_mun:string}[]; // Replace 'any' with the appropriate type
+	reset: () => void;
+})  => {
   return (
     <><div className='gForm triB'>
 					<h2>Buscar</h2>

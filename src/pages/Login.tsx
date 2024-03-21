@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { Footer } from "../componentes/global/footer";
+import { Footer } from "../componentes/global/Footer";
 import { useAppStore } from "../stores/app.store";
 import { Conexion } from "../service/Conexion";
 import Swal from "sweetalert2";
@@ -9,12 +9,12 @@ export const Login = () => {
 	const datatable = new Conexion();
 	const toogleLoading = useAppStore((state) => state.toogleLoading);
 	const login = useAppStore((state) => state.iniciar);
-	const estado = useAppStore((state) => state);
+	// const estado = useAppStore((state) => state);
 
 	const {
 		register,
 		handleSubmit,
-		formState: { errors, isDirty, isValid },
+		
 	} = useForm();
 
 	const onSubmit = handleSubmit((data) => {

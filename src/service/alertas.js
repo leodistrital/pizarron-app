@@ -11,76 +11,66 @@ export const alertaGuardado = (status, Swal, setOpen) => {
 		});
 };
 
-
-
-export const alertaconfirmarBorado = ( Swal, deleteRegistro) => {
+export const alertaconfirmarBorado = (Swal, deleteRegistro) => {
 	Swal.fire({
-			title:
-				"<p>Este registro se eliminará del sistema. <br>¿Esta seguro de eliminar el registro?</p>",
-			showDenyButton: true,
-			confirmButtonText: `Si, eliminar registro`,
-			denyButtonText: `No, cancelar esta acción`,
-			customClass: {
-				confirmButton: "btnDarkcustom",
-				denyButton: "btnDarkcustom",
-				title: "titulocustom",
-			},
-		}).then((result) => {
-			if (result.isConfirmed) {
-                // console.log('confirmado ');
-                // console.log(deleteRegistro);
-				deleteRegistro();
-				
-			}
-		});
+		title:
+			"<p>Este registro se eliminará del sistema. <br>¿Esta seguro de eliminar el registro?</p>",
+		showDenyButton: true,
+		confirmButtonText: `Si, eliminar registro`,
+		denyButtonText: `No, cancelar esta acción`,
+		customClass: {
+			confirmButton: "btnDarkcustom",
+			denyButton: "btnDarkcustom",
+			title: "titulocustom",
+		},
+	}).then((result) => {
+		if (result.isConfirmed) {
+			// console.log('confirmado ');
+			// console.log(deleteRegistro);
+			deleteRegistro();
+		}
+	});
 };
 
-
-
-export const alertaconfirmarBoradoConID = ( Swal, deleteRegistro,id) => {
+export const alertaconfirmarBoradoConID = (Swal, deleteRegistro, id) => {
 	Swal.fire({
-			title:
-				"<p>Este registro se eliminará del sistema. <br>¿Esta seguro de eliminar el registro?</p>",
-			showDenyButton: true,
-			confirmButtonText: `Si, eliminar registro`,
-			denyButtonText: `No, cancelar esta acción`,
-			customClass: {
-				confirmButton: "btnDarkcustom",
-				denyButton: "btnDarkcustom",
-				title: "titulocustom",
-			},
-		}).then((result) => {
-			if (result.isConfirmed) {
-                // console.log('confirmado ');
-                // console.log(deleteRegistro);
-				deleteRegistro(id);
-				
-			}
-		});
+		title:
+			"<p>Este registro se eliminará del sistema. <br>¿Esta seguro de eliminar el registro?</p>",
+		showDenyButton: true,
+		confirmButtonText: `Si, eliminar registro`,
+		denyButtonText: `No, cancelar esta acción`,
+		customClass: {
+			confirmButton: "btnDarkcustom",
+			denyButton: "btnDarkcustom",
+			title: "titulocustom",
+		},
+	}).then((result) => {
+		if (result.isConfirmed) {
+			// console.log('confirmado ');
+			// console.log(deleteRegistro);
+			deleteRegistro(id);
+		}
+	});
 };
 
-
-
-export const liginError = ( Swal) => {
+export const liginError = (Swal) => {
 	Swal.fire({
-			title:
-				"<p>Error de Ingreso</p>",
-			// showDenyButton: true,
-			confirmButtonText: `Continuar`,
-			
-			customClass: {
-				confirmButton: "btnDarkcustom",
-				denyButton: "btnDarkcustom",
-				title: "titulocustom",
-			},
-		}).then((result) => {
-			if (result.isConfirmed) {
-                // console.log('confirmado ');
-                // console.log(deleteRegistro);
-				// deleteRegistro(id);
-				
-			}
-		});
+		title: "<p>Error de Ingreso</p>",
+		// showDenyButton: true,
+		confirmButtonText: `Continuar`,
+
+		customClass: {
+			confirmButton: "btnDarkcustom",
+			denyButton: "btnDarkcustom",
+			title: "titulocustom",
+		},
+	}).then((result) => {
+		if (result.isConfirmed) {
+			// console.log('confirmado ');
+			// console.log(deleteRegistro);
+			// deleteRegistro(id);
+		}
+	});
 };
 
 

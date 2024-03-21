@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Modal } from "react-responsive-modal";
 import "react-responsive-modal/styles.css";
@@ -7,7 +7,7 @@ import { alertaGuardado, alertaconfirmarBorado } from "../service/alertas";
 import { Conexion } from "../service/Conexion";
 import { useAppStore } from "../stores/app.store";
 
-export const Conyugue = ({ idregistro, open, setOpen, Tabla, codigoPadre }) => {
+export const Conyugue = ({ idregistro, open, setOpen, Tabla, codigoPadre }: { idregistro: number, open: boolean, setOpen: (open: boolean) => void, Tabla: string, codigoPadre: string }) => {
 	const defaultValues = {
 		id: "0",
 		nom_per: "",
@@ -17,6 +17,8 @@ export const Conyugue = ({ idregistro, open, setOpen, Tabla, codigoPadre }) => {
 		obs_per: "",
 		coy_per: codigoPadre,
 		est_coy_per: 1,
+		updated_at: "",
+		usuario: "",
 	};
 	const datatable = new Conexion();
 
@@ -32,7 +34,7 @@ export const Conyugue = ({ idregistro, open, setOpen, Tabla, codigoPadre }) => {
 	const toogleLoading = useAppStore((state) => state.toogleLoading);
 	// const [departamentoData, setdepartamentoData] = useState([]);
 
-	const [opensucursal, setopensucursal] = useState(false);
+	// const [opensucursal, setopensucursal] = useState(false);
 
 	const confirmarBorado = () => {
 		alertaconfirmarBorado(Swal, deleteRegistro);

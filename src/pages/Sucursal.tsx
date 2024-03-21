@@ -7,7 +7,15 @@ import { alertaGuardado, alertaconfirmarBorado } from "../service/alertas";
 import { Conexion } from "../service/Conexion";
 import { useAppStore } from "../stores/app.store";
 
-export const Sucursal = ({ idregistro, open, setOpen, Tabla, codigoPadre }) => {
+type SucursalProps = {
+	idregistro: number;
+	open: boolean;
+	setOpen: (open: boolean) => void;
+	Tabla: string;
+	codigoPadre: number;
+};
+
+export const Sucursal = ({ idregistro, open, setOpen, Tabla, codigoPadre }: SucursalProps) => {
 	const defaultValues = {
 		id: "0",
 		nom_emp: "",
@@ -35,9 +43,9 @@ export const Sucursal = ({ idregistro, open, setOpen, Tabla, codigoPadre }) => {
 	} = useForm({defaultValues});
 
 	const toogleLoading = useAppStore((state) => state.toogleLoading);
-	const [departamentoData, setdepartamentoData] = useState([]);
+	// const [departamentoData, setdepartamentoData] = useState([]);
 
-	const [opensucursal, setopensucursal] = useState(false)
+	// const [opensucursal, setopensucursal] = useState(false)
 
 	const confirmarBorado = () => {
 		alertaconfirmarBorado(Swal, deleteRegistro);
@@ -149,7 +157,7 @@ export const Sucursal = ({ idregistro, open, setOpen, Tabla, codigoPadre }) => {
 											<option value={0}>
 												Seleccione..
 											</option>
-											{ciudadesData.map((item, index) => {
+											{ciudadesData.map((item :{id:string, nom_mun:string  }, index) => {
 												return (
 													<option
 														key={index}

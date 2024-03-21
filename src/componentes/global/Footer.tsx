@@ -1,4 +1,3 @@
-
 import Modal from "react-responsive-modal";
 import { useAppStore } from "../../stores/app.store";
 
@@ -8,24 +7,25 @@ export const Footer = () => {
 	// const esatado = useAppStore((state) => state);
 
 	// posicion = isloading ? "block" : "none";
-	posicion= "block";
+	posicion = "block";
 
 	return (
 		<>
-		<Modal  open={isloading} 
-		
-					center
-					showCloseIcon={false}
-					classNames={{
-          modal: 'customModal',
-        }}
-		>
+			<Modal  open={isloading}
+
+			center
+			showCloseIcon={false}
+			classNames={{
+				modal: 'customModal',
+			}} onClose={function (): void {
+				throw new Error("Function not implemented.");
+			} }		>
 			<div
 				className='gLoading'
 				style={{ display: posicion, marginTop: "0px" }}></div>
 		</Modal>
 
-		{/* <pre>{ JSON.stringify(esatado)  }</pre> */}
+			{/* <pre>{ JSON.stringify(esatado)  }</pre> */}
 		</>
 	);
 };

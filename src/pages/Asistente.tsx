@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { Modal } from "react-responsive-modal";
 import "react-responsive-modal/styles.css";
 import Swal from "sweetalert2";
-import { alertaGuardado, alertaconfirmarBorado } from "../service/alertas";
+import { alertaGuardado } from "../service/alertas";
 import { Conexion } from "../service/Conexion";
 import { useAppStore } from "../stores/app.store";
 
@@ -13,6 +13,12 @@ export const Asistente = ({
 	setOpen,
 	Tabla,
 	codigoPadre,
+}: {
+	idregistro: number;
+	open: any;
+	setOpen: any;
+	Tabla: any;
+	codigoPadre: any;
 }) => {
 	const defaultValues = {
 		id: "0",
@@ -25,6 +31,8 @@ export const Asistente = ({
 		coy_per: codigoPadre,
 		asis_per: 1,
 		dir_corr_per: "",
+		updated_at: "",
+		usuario: "",
 	};
 	const datatable = new Conexion();
 
@@ -44,9 +52,9 @@ export const Asistente = ({
 	const [regaloData, setregaloData] = useState([]);
 	const [listadirecciones, setlistadirecciones] = useState([]);
 
-	const confirmarBorado = () => {
-		alertaconfirmarBorado(Swal, deleteRegistro);
-	};
+	// const confirmarBorado = () => {
+	// 	alertaconfirmarBorado(Swal, deleteRegistro);
+	// };
 
 	const onCloseModal = () => {
 		setOpen(false);
@@ -101,13 +109,13 @@ export const Asistente = ({
 
 	//ELIMINAR
 
-	const deleteRegistro = () => {
-		toogleLoading(true);
-		datatable.getEliminarItem(Tabla, idregistro).then(() => {
-			setOpen(false);
-			toogleLoading(false);
-		});
-	};
+	// const deleteRegistro = () => {
+	// 	toogleLoading(true);
+	// 	datatable.getEliminarItem(Tabla, idregistro).then(() => {
+	// 		setOpen(false);
+	// 		toogleLoading(false);
+	// 	});
+	// };
 
 	return (
 		<>
@@ -188,7 +196,7 @@ export const Asistente = ({
 											<option value={0}>
 												Seleccione..
 											</option>
-											{regaloData.map((item, index) => {
+											{regaloData.map((item:{id:string, name:string}, index) => {
 												return (
 													<option
 														key={index}
@@ -211,7 +219,7 @@ export const Asistente = ({
 												Seleccione..
 											</option>
 											{listadirecciones.map(
-												(item, index) => {
+												(item: {direccion:string, lugar:string }, index) => {
 													return (
 														<option
 															key={index}

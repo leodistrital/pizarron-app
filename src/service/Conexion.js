@@ -1,9 +1,14 @@
 import axios from "axios";
 import { useAppStore } from "../stores/app.store";
-import { Header } from '../componentes/global/Header';
+// import { Header } from '../componentes/global/Header';
 
 const URL = "http://localhost" + "/api/";
 const URLlogin = "http://localhost" + "/login";
+
+// const URL = "https://api.pizarron.info" + "/api/";
+// const URLlogin = "https://api.pizarron.info" + "/login";
+
+
 
 export class Conexion {
 	header = {};
@@ -85,7 +90,7 @@ export class Conexion {
 				// console.log(res.data)
 				return res.data;
 			})
-			.catch(function (err) {
+			.catch(function () {
 				return 0;
 			});
 	}

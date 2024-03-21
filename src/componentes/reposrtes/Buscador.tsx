@@ -6,27 +6,46 @@ import { useAppStore } from "../../stores/app.store";
 // import { DevTool } from "@hookform/devtools";
 
 export const Buscador = () => {
-	const toogleLoading = useAppStore((state) => state.toogleLoading);
-	const [descargaexcel, setdescargaexcel] = useState(null);
+	// const [descargaexcel, setdescargaexcel] = useState(null);
 
-	const defaultValues = {
-		eventos: [],
-		sectores: [],
-		segmentos: [],
-	};
+	// const defaultValues = {
+	// 	eventos: [],
+	// 	sectores: [],
+	// 	segmentos: [],
+	// };
+
+	const datatable = new Conexion();
+
+	const toogleLoading = useAppStore((state) => state.toogleLoading);
+
+	const [eventosData, seteventos] = useState([]);
+	const [sectoresData, setsectores] = useState([]);
+	const [segmentosData, setsegmentosData] = useState([]);
 
 	const {
 		register: register1,
 		handleSubmit: handleSubmit1,
 		reset: reset1,
 		control,
-	} = useForm({ defaultValues });
+	} = useForm(  );
 
-	const datatable = new Conexion();
+	// const {
+	// 	fields: eventosfields,
+	// 	append: appendeventos,
+	// 	remove: removeeventos,
+	// } = useFieldArray({
+	// 	control,
+	// 	name: "eventos"
+	// }  );
 
-	const [eventosData, seteventos] = useState([]);
-	const [sectoresData, setsectores] = useState([]);
-	const [segmentosData, setsegmentosData] = useState([]);
+	// const {
+	// 	fields: eventosfields,
+	// 	append: appendeventos,
+	// 	remove: removeeventos,
+	// } = useFieldArray({
+	// 	name: "eventos",
+	// 	control: control,
+	// });
 
 	const {
 		fields: eventosfields,
@@ -36,21 +55,22 @@ export const Buscador = () => {
 		name: "eventos",
 		control: control,
 	});
+
 	const {
 		fields: sectoresfields,
 		append: appendsectores,
 		remove: removesectores,
 	} = useFieldArray({
+		control,
 		name: "sectores",
-		control: control,
 	});
 	const {
 		fields: segmentosfields,
 		append: appendsegementos,
 		remove: removesegementos,
 	} = useFieldArray({
+		control,
 		name: "segmentos",
-		control: control,
 	});
 
 	/**Efecto solo para paremetros del formulario */
@@ -71,12 +91,12 @@ export const Buscador = () => {
 		// console.log(data);
 		toogleLoading(true);
 		datatable.getCrearItem("reportes", data).then(({ resp }) => {
-			exportExcel([...resp.data])
+			exportExcel([...resp.data]);
 		});
 	});
 
-	const exportExcel = (datos) => {
-		console.log({datos});
+	const exportExcel = (datos: string[]) => {
+		console.log({ datos });
 		// console.log(typeof dataSet);
 		import("xlsx").then((xlsx) => {
 			const worksheet = xlsx.utils.json_to_sheet(datos);
@@ -94,7 +114,7 @@ export const Buscador = () => {
 		toogleLoading(false);
 	};
 
-	const saveAsExcelFile = (buffer, fileName) => {
+	const saveAsExcelFile = (buffer: any, fileName: string) => {
 		let formatoPersonalizado = "";
 		import("file-saver").then((module) => {
 			if (module && module.default) {
@@ -158,7 +178,13 @@ export const Buscador = () => {
 													Seleccione..
 												</option>
 												{eventosData.map(
-													(item, index) => {
+													(
+														item: {
+															id: number;
+															nom_eve: string;
+														},
+														index: number
+													) => {
 														return (
 															<option
 																key={index}
@@ -214,7 +240,13 @@ export const Buscador = () => {
 													Seleccione..
 												</option>
 												{sectoresData.map(
-													(item, index) => {
+													(
+														item: {
+															id: number;
+															nom_sec: string;
+														},
+														index
+													) => {
 														return (
 															<option
 																key={index}
@@ -268,7 +300,13 @@ export const Buscador = () => {
 													Seleccione..
 												</option>
 												{segmentosData.map(
-													(item, index) => {
+													(
+														item: {
+															id: number;
+															nom_seg: string;
+														},
+														index: number
+													) => {
 														return (
 															<option
 																key={index}

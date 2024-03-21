@@ -1,4 +1,4 @@
-export const Resultados = ({ dataResultado, editProduct }) => {
+export const Resultados = ({ dataResultado, editProduct }: { dataResultado: Array<any>, editProduct: any }) => {
 	return (
 		<>
 			{dataResultado.length > 0 && (

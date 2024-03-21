@@ -6,9 +6,19 @@ import Swal from "sweetalert2";
 import { alertaGuardado, alertaconfirmarBorado } from "../../service/alertas";
 import { Conexion } from "../../service/Conexion";
 import { useAppStore } from "../../stores/app.store";
-import { Sucursal } from '../../pages/Sucursal';
+import { Sucursal } from "../../pages/Sucursal";
 
-export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
+export const Formulario = ({
+	idregistro,
+	open,
+	setOpen,
+	Tabla,
+}: {
+	idregistro: number;
+	open: boolean;
+	setOpen: (open: boolean) => void;
+	Tabla: string;
+}) => {
 	const defaultValues = {
 		id: "0",
 		nom_emp: "",
@@ -32,7 +42,7 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 		handleSubmit: handleSubmit1,
 		reset: reset1,
 		getValues,
-	} = useForm({defaultValues});
+	} = useForm({ defaultValues });
 
 	const toogleLoading = useAppStore((state) => state.toogleLoading);
 	const [departamentoData, setdepartamentoData] = useState([]);
@@ -73,7 +83,7 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 		} else {
 			reset1(defaultValues);
 		}
-	}, [idregistro ,open , opensucursal]);
+	}, [idregistro, open, opensucursal]);
 
 	//CREAR Y EDITAR
 	const onSubmitpost = handleSubmit1((data) => {
@@ -131,7 +141,7 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 					</span>
 					<div className='gForm triB'>
 						{/* <pre>{JSON.stringify(idregistro, null, 2)}</pre> */}
-						<h2>Formulario empresas  </h2>
+						<h2>Formulario empresas </h2>
 						<div>
 							<form onSubmit={onSubmitpost}>
 								<div className='col2'>
@@ -154,9 +164,11 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 											{...register1("cod_dep_emp")}
 											onChange={(e) => {
 												// console.log(e.target.value);
-												let data = ciudadesData.filter(
+												const data = ciudadesData.filter(
 													(ciudad) =>
-														ciudad.cod_dep_mun ==
+														(ciudad as {
+															cod_dep_mun: string;
+														}).cod_dep_mun ==
 														e.target.value
 												);
 												// console.log(data);
@@ -168,12 +180,21 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 												Seleccione..
 											</option>
 											{departamentoData.map(
-												(item, index) => {
+												(
+													item: {
+														cod_dep: string;
+														nom_dep: string;
+													},
+													index: number
+												) => {
 													return (
 														<option
 															key={index}
-															value={item?.id}>
-															{item?.nom_dep}
+															value={
+																item?.cod_dep
+															}>
+															{item &&
+																item?.nom_dep}
 														</option>
 													);
 												}
@@ -192,11 +213,19 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 												Seleccione..
 											</option>
 											{ciudadesDataselecciona.map(
-												(item, index) => {
+												(
+													item: {
+														cod_mun: string;
+														nom_mun: string;
+													},
+													index: number
+												) => {
 													return (
 														<option
 															key={index}
-															value={item?.id}>
+															value={
+																item?.cod_mun
+															}>
 															{item?.nom_mun}
 														</option>
 													);
@@ -261,11 +290,21 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 										{
 											// if(getValues('sucursales').length > 0){
 											getValues("sucursales").map(
-												(item, index) => {
+												(
+													item: {
+														id: number;
+														nom_emp: string;
+													},
+													index
+												) => {
 													return (
 														<li key={index}>
 															<a
-																onClick={() => editSucursal(item.id)}
+																onClick={() =>
+																	editSucursal(
+																		item.id
+																	)
+																}
 																href='#'
 																className='openEditSurc'>
 																{item.nom_emp}
@@ -284,7 +323,7 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 										</li> */}
 									</ul>
 								</div>
-{/* 
+								{/* 
 								<div className='dateModi'>
 									<p>
 										<strong>Fecha de creación</strong>
@@ -317,7 +356,7 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 												href='#'
 												className='btnDark'
 												id='toggleFC'>
-												Crear sucursal 
+												Crear sucursal
 											</a>
 										</>
 									)}
@@ -326,21 +365,19 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 						</div>
 					</div>
 				</div>
-				<Sucursal idregistro={idsucursal}
-				open={opensucursal}
-				setOpen={setopensucursal}
-				Tabla={Tabla} 		
-				codigoPadre={idregistro}
+				<Sucursal
+					idregistro={idsucursal}
+					open={opensucursal}
+					setOpen={setopensucursal}
+					Tabla={Tabla}
+					codigoPadre={idregistro}
 				/>
 			</Modal>
-
-			
-		
 		</>
 	);
 };
 
 /**
  * idregistro, open, setOpen, Tabla
- * 
+ *
  */
