@@ -163,6 +163,8 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 
 	//CARGA INICIAL
 	useEffect(() => {
+
+		reset1(defaultValues);
 		if (idregistro > 0) {
 			toogleLoading(true);
 			datatable.getItem(Tabla, idregistro).then(({ data }) => {
@@ -192,6 +194,7 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 		toogleLoading(true);
 		if (idregistro == 0) {
 			datatable.getCrearItem(Tabla, data).then(({ resp }) => {
+				
 				alertaGuardado(resp.status, Swal, setOpen);
 				toogleLoading(false);
 			});
@@ -200,6 +203,7 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 			datatable
 				.getEditarItem(Tabla, data, idregistro)
 				.then(({ resp }) => {
+					
 					alertaGuardado(resp.status, Swal, setOpen);
 					toogleLoading(false);
 				});
@@ -212,6 +216,14 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 	const editAsistente = (id = 0) => {
 		setasistenteActivo(id);
 		setopenAsistente(true);
+	};
+
+
+	const verificardatos = () => {
+		console.log(getValues());
+		//reset1(defaultValues);
+		//console.log(getValues());
+
 	};
 
 	//ELIMINAR
@@ -1052,6 +1064,15 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 											/>
 										</>
 									)}
+
+									<>
+											<input
+												type='button'
+												defaultValue='verificar'
+												className='btnDark  deleteReg'
+												onClick={verificardatos}
+											/>
+										</>
 								</div>
 							</form>
 						</div>
