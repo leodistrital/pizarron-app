@@ -149,6 +149,7 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 			const empresas = data.filter((empresa) => empresa.cod_pad_emp == 0);
 			setempresasData(empresas);
 			setsucursalesData(data);
+			// console.log(sucursalesData);
 			// const empresasSucursal = data.filter(
 			// 	(empresa) => empresa.cod_pad_emp != 0
 			// );
@@ -163,7 +164,6 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 
 	//CARGA INICIAL
 	useEffect(() => {
-
 		reset1(defaultValues);
 		if (idregistro > 0) {
 			toogleLoading(true);
@@ -194,7 +194,6 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 		toogleLoading(true);
 		if (idregistro == 0) {
 			datatable.getCrearItem(Tabla, data).then(({ resp }) => {
-				
 				alertaGuardado(resp.status, Swal, setOpen);
 				toogleLoading(false);
 			});
@@ -203,7 +202,6 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 			datatable
 				.getEditarItem(Tabla, data, idregistro)
 				.then(({ resp }) => {
-					
 					alertaGuardado(resp.status, Swal, setOpen);
 					toogleLoading(false);
 				});
@@ -218,12 +216,10 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 		setopenAsistente(true);
 	};
 
-
 	const verificardatos = () => {
 		console.log(getValues());
 		//reset1(defaultValues);
 		//console.log(getValues());
-
 	};
 
 	//ELIMINAR
@@ -266,6 +262,27 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 		});
 	};
 
+	
+
+
+
+	const options = () => 
+	{
+
+		const optionsData = [
+		{ value: "opcion1", label: "Opción 1" },
+		{ value: "1518", label: "1518* 3" },
+		{ value: "opcion2", label: "Opción 2" },
+		{ value: "opcion3", label: "Opción 3" },
+		
+	];
+	const leo  = optionsData.map(({...option}, index) => (
+		<option key={index} value={option.value}>
+			{option.label}
+		</option>
+	));
+	return leo;
+}
 	return (
 		<>
 			<Modal
@@ -794,6 +811,16 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 									<ul id='contEmpre' className='hiddenB'>
 										<li></li>
 										{fieldsempresa.map((item, index) => {
+											// console.log({fieldsempresa});
+											let { cod_emp } = item;
+											console.log({ cod_emp });
+											let data = sucursalesData.filter(
+												(ciudad) =>
+													ciudad.cod_pad_emp ==
+														cod_emp && cod_emp != 0
+											);
+											console.log(data);
+
 											return (
 												<li
 													className='contRemove'
@@ -819,10 +846,25 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 																);
 															}}
 															className='SELECT valid'
-															aria-invalid='false'>
+															aria-invalid='false'
+
+															// onClick ={(e) => {
+															// 	let data = sucursalesData.filter(
+															// 		(ciudad) =>
+															// 			ciudad.cod_pad_emp ==
+															// 			e.target
+															// 				.value
+															// 	);
+															// 	console.log(data);
+															// 	setsucursalesFiltrado(
+															// 		data
+															// 	);
+															// }}
+														>
 															<option value={0}>
 																Seleccione..
 															</option>
+
 															{empresasData.map(
 																(
 																	item,
@@ -846,7 +888,9 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 														</select>
 													</p>
 													<p>
-														<label>Sucursal</label>
+														<label>
+															Sucursal {cod_emp}{" "}
+														</label>
 														<select
 															{...register1(
 																`empresas.${index}.cod_suc`
@@ -855,7 +899,9 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 															<option value={0}>
 																Seleccione...
 															</option>
-															{sucursalesFiltrado.map(
+															{options() }
+
+															{/* {data.map(
 																(
 																	item,
 																	index
@@ -874,7 +920,7 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 																		</option>
 																	);
 																}
-															)}
+															)} */}
 														</select>
 													</p>
 													<p>
@@ -1043,7 +1089,8 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 										{getValues("updated_at")}
 									</p>
 									<p>
-										<strong>Usuario: </strong> {getValues("usuario")}
+										<strong>Usuario: </strong>{" "}
+										{getValues("usuario")}
 									</p>
 								</div>
 
@@ -1066,13 +1113,13 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 									)}
 
 									<>
-											<input
-												type='button'
-												defaultValue='verificar'
-												className='btnDark  deleteReg'
-												onClick={verificardatos}
-											/>
-										</>
+										<input
+											type='button'
+											defaultValue='verificar'
+											className='btnDark  deleteReg'
+											onClick={verificardatos}
+										/>
+									</>
 								</div>
 							</form>
 						</div>
