@@ -150,10 +150,10 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 			setempresasData(empresas);
 			setsucursalesData(data);
 			// console.log(sucursalesData);
-			// const empresasSucursal = data.filter(
-			// 	(empresa) => empresa.cod_pad_emp != 0
-			// );
-			// setsucursalesData(empresasSucursal);
+			const empresasSucursal = data.filter(
+				(empresa) => empresa.cod_pad_emp != 0
+			);
+			setsucursalesData(empresasSucursal);
 		});
 		datatable
 			.gettable("parametros/eventos")
@@ -262,27 +262,36 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 		});
 	};
 
-	
+	const options = (codigoEmpresa=0,objeto='') => {
 
+		if(objeto!=''){
+			console.log(objeto);
+		}
+		console.log({codigoEmpresa});
 
+		// console.log(sucursalesData);
 
-	const options = () => 
-	{
+		const optionsData = sucursalesData.filter(
+				(empresa) => empresa.cod_pad_emp == codigoEmpresa
+			);
 
-		const optionsData = [
-		{ value: "opcion1", label: "Opción 1" },
-		{ value: "1518", label: "1518* 3" },
-		{ value: "opcion2", label: "Opción 2" },
-		{ value: "opcion3", label: "Opción 3" },
-		
-	];
-	const leo  = optionsData.map(({...option}, index) => (
-		<option key={index} value={option.value}>
-			{option.label}
-		</option>
-	));
-	return leo;
-}
+		console.log({optionsData});	
+		// const optionsData = [
+		// 	{ value: "opcion1", label: "Opción 1" },
+		// 	{ value: "1518", label: "1518* 3" },
+		// 	{ value: "opcion2", label: "Opción 2" },
+		// 	{ value: "1258", label: "1258" },
+		// ];
+
+		const leo = optionsData.map(({ ...option }, index) => (
+			<option key={index} value={option.id}>
+				{option.nom_emp}
+			</option>
+		));
+
+		return leo;
+	};
+
 	return (
 		<>
 			<Modal
@@ -812,38 +821,44 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 										<li></li>
 										{fieldsempresa.map((item, index) => {
 											// console.log({fieldsempresa});
-											let { cod_emp } = item;
-											console.log({ cod_emp });
+											let { cod_emp, cod_suc } = item;
+											console.log({ cod_emp, cod_suc });
 											let data = sucursalesData.filter(
 												(ciudad) =>
 													ciudad.cod_pad_emp ==
 														cod_emp && cod_emp != 0
 											);
-											console.log(data);
+											// console.log(data);
 
 											return (
 												<li
 													className='contRemove'
 													key={item.id}>
 													<p>
-														<label>Empresa</label>
+														<label>
+															Empresa {cod_emp}
+														</label>
 
 														<select
 															{...register1(
 																`empresas.${index}.cod_emp`
 															)}
 															onChange={(e) => {
-																// console.log(e.target.value);
-																let data = sucursalesData.filter(
-																	(ciudad) =>
-																		ciudad.cod_pad_emp ==
-																		e.target
-																			.value
-																);
-																// console.log(data);
-																setsucursalesFiltrado(
-																	data
-																);
+																console.log('change empresa');
+																console.log(e.target.value);
+																options(e.target.value , `empresas.${index}.cod_suc`)
+																// let data = sucursalesData.filter(
+																// 	(ciudad) =>
+																// 		ciudad.cod_pad_emp ==
+																// 		e.target
+																// 			.value
+																// );
+																// console.log(
+																// 	data
+																// );
+																// setsucursalesFiltrado(
+																// 	data
+																// );
 															}}
 															className='SELECT valid'
 															aria-invalid='false'
@@ -862,7 +877,7 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 															// }}
 														>
 															<option value={0}>
-																Seleccione..
+																Seleccione...
 															</option>
 
 															{empresasData.map(
@@ -887,9 +902,11 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 															)}
 														</select>
 													</p>
+
+													{/* sucursales */}
 													<p>
 														<label>
-															Sucursal {cod_emp}{" "}
+															Sucursal {cod_suc}
 														</label>
 														<select
 															{...register1(
@@ -899,7 +916,7 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 															<option value={0}>
 																Seleccione...
 															</option>
-															{options() }
+															{options(cod_emp)}
 
 															{/* {data.map(
 																(
