@@ -15,7 +15,7 @@ import { Asistente } from "../../pages/Asistente";
 
 // import { DevTool } from "@hookform/devtools";
 
-export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
+export const Formulario = ({ idregistro, open, setOpen, Tabla, onSubmitBuscador }) => {
 	const defaultValues = {
 		id: "",
 		cod_tit_per: "",
@@ -185,7 +185,7 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 		} else {
 			reset1(defaultValues);
 		}
-		// console.log(idregistro);
+		console.log(idregistro, 'leo');
 	}, [idregistro, open, openconyugue, cambioAsistente, openAsistente]);
 
 	//CREAR Y EDITAR
@@ -204,6 +204,7 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 				.then(({ resp }) => {
 					alertaGuardado(resp.status, Swal, setOpen);
 					toogleLoading(false);
+					onSubmitBuscador();
 				});
 		}
 	});
@@ -262,20 +263,20 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 		});
 	};
 
-	const options = (codigoEmpresa=0,objeto='') => {
+	const options = (codigoEmpresa = 0, objeto = '') => {
 
-		if(objeto!=''){
+		if (objeto != '') {
 			console.log(objeto);
 		}
-		console.log({codigoEmpresa});
+		console.log({ codigoEmpresa });
 
 		// console.log(sucursalesData);
 
 		const optionsData = sucursalesData.filter(
-				(empresa) => empresa.cod_pad_emp == codigoEmpresa
-			);
+			(empresa) => empresa.cod_pad_emp == codigoEmpresa
+		);
 
-		console.log({optionsData});	
+		// console.log({optionsData});	
 		// const optionsData = [
 		// 	{ value: "opcion1", label: "Opción 1" },
 		// 	{ value: "1518", label: "1518* 3" },
@@ -822,11 +823,11 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 										{fieldsempresa.map((item, index) => {
 											// console.log({fieldsempresa});
 											let { cod_emp, cod_suc } = item;
-											console.log({ cod_emp, cod_suc });
+											// console.log({ cod_emp, cod_suc });
 											let data = sucursalesData.filter(
 												(ciudad) =>
 													ciudad.cod_pad_emp ==
-														cod_emp && cod_emp != 0
+													cod_emp && cod_emp != 0
 											);
 											// console.log(data);
 
@@ -846,7 +847,7 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 															onChange={(e) => {
 																console.log('change empresa');
 																console.log(e.target.value);
-																options(e.target.value , `empresas.${index}.cod_suc`)
+																options(e.target.value, `empresas.${index}.cod_suc`)
 																// let data = sucursalesData.filter(
 																// 	(ciudad) =>
 																// 		ciudad.cod_pad_emp ==
@@ -863,18 +864,18 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 															className='SELECT valid'
 															aria-invalid='false'
 
-															// onClick ={(e) => {
-															// 	let data = sucursalesData.filter(
-															// 		(ciudad) =>
-															// 			ciudad.cod_pad_emp ==
-															// 			e.target
-															// 				.value
-															// 	);
-															// 	console.log(data);
-															// 	setsucursalesFiltrado(
-															// 		data
-															// 	);
-															// }}
+														// onClick ={(e) => {
+														// 	let data = sucursalesData.filter(
+														// 		(ciudad) =>
+														// 			ciudad.cod_pad_emp ==
+														// 			e.target
+														// 				.value
+														// 	);
+														// 	console.log(data);
+														// 	setsucursalesFiltrado(
+														// 		data
+														// 	);
+														// }}
 														>
 															<option value={0}>
 																Seleccione...
@@ -1078,14 +1079,14 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 										</label>
 										<textarea
 											placeholder='|'
-											maxLength={500}
+											maxLength={5000}
 											className='maxLength'
 											{...register1("obs_per")}
 										/>
-										<span className='numCarac'>
+										{/* <span className='numCarac'>
 											<strong>0</strong> caracteres de
-											<strong>500</strong>
-										</span>
+											<strong>5000</strong>
+										</span> */}
 									</p>
 									<p>
 										<label htmlFor='hab_per'>
@@ -1093,7 +1094,7 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 										</label>
 										<textarea
 											placeholder='|'
-											maxLength={128}
+											maxLength={5000}
 											className='maxLength'
 											{...register1("hab_per")}
 										/>
@@ -1130,12 +1131,12 @@ export const Formulario = ({ idregistro, open, setOpen, Tabla }) => {
 									)}
 
 									<>
-										<input
+										{/* <input
 											type='button'
 											defaultValue='verificar'
 											className='btnDark  deleteReg'
 											onClick={verificardatos}
-										/>
+										/> */}
 									</>
 								</div>
 							</form>

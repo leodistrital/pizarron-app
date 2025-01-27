@@ -54,6 +54,7 @@ export const Personas = () => {
 				open={open}
 				setOpen={setOpen}
 				Tabla={Tabla}
+				onSubmitBuscador={onSubmitBuscador}
 			/>
 			<section className='gContent'>
 				{/*Titulo seccion*/}
@@ -82,6 +83,7 @@ export const Personas = () => {
 				<Resultados
 					dataResultado={dataResultado}
 					editProduct={editProduct}
+					
 				/>
 			</section>
 		</>

@@ -127,12 +127,12 @@ export const Buscador = ({ onSubmitBuscador, register, reset }) => {
 								defaultValue='Buscar'
 								className='btnDark'
 							/>
-							<input
+							{/* <input
 								type='hidden'
 								name='ti'
 								id='ti'
 								defaultValue='cHJvdG9jb2xvdGlwbz0ycHJvdG9jb2xv'
-							/>
+							/> */}
 						</div>
 					</form>
 				</div>
