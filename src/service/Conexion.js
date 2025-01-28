@@ -2,11 +2,11 @@ import axios from "axios";
 import { useAppStore } from "../stores/app.store";
 // import { Header } from '../componentes/global/Header';
 
-const URL = "http://localhost" + "/api/";
-const URLlogin = "http://localhost" + "/login";
+// const URL = "http://localhost" + "/api/";
+// const URLlogin = "http://localhost" + "/login";
 
-// const URL = "https://api.pizarron.info" + "/api/";
-// const URLlogin = "https://api.pizarron.info" + "/login";
+const URL = "https://api.pizarron.info" + "/api/";
+const URLlogin = "https://api.pizarron.info" + "/login";
 
 
 
